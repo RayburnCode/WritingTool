@@ -1,23 +1,49 @@
 use dioxus::prelude::*;
 
-use ui::Navbar;
-use views::{Blog, Home, TestingView};
+use views::{AppLayout, Blog, Home, TestingView};
 
 mod views;
 
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
-enum Route {
-    //    #[layout(AppLayout)]
-
-    #[layout(DesktopNavbar)]
-
-    #[route("/")]
-    Home {},
-    #[route("/blog/:id")]
-    Blog { id: i32 },
-    #[route("/testing")]
-    TestingView {},
+pub enum Route {
+    #[layout(AppLayout)]
+        #[route("/")]
+        Home {},
+        
+        #[route("/blog/:id")]
+        Blog { id: i32 },
+        
+        #[route("/testing")]
+        TestingView {},
+        
+        #[route("/editor")]
+        Editor {},
+        
+        #[route("/focus")]
+        FocusMode {},
+        
+        #[route("/settings")]
+        Settings {},
+        
+        #[nest("/help")]
+            #[route("/")]
+            HelpMain {},
+            
+            #[route("/faq")]
+            HelpFaq {},
+            
+            #[route("/contact")]
+            HelpContact {},
+        #[end_nest]
+        
+    #[end_layout]
+    
+    #[route("/login")]
+    Login {},
+    
+    #[route("/404")]
+    NotFound {},
 }
 
 // Update the path if your CSS file is located elsewhere, e.g. "/assets/css/tailwind.css"
@@ -29,7 +55,6 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    // Build cool things ✌️
 
     rsx! {
         // Global app resources
@@ -39,17 +64,4 @@ fn App() -> Element {
     }
 }
 
-/// A desktop-specific Router around the shared `Navbar` component
-/// which allows us to use the desktop-specific `Route` enum.
-#[component]
-fn DesktopNavbar() -> Element {
-    rsx! {
-        Navbar {
-            Link { to: Route::Home {}, "Home" }
-            Link { to: Route::Blog { id: 1 }, "Blog" }
-            Link { to: Route::TestingView {}, "Testing" }
-        }
 
-        Outlet::<Route> {}
-    }
-}

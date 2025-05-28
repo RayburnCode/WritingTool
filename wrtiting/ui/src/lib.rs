@@ -3,11 +3,13 @@
 mod hero;
 pub use hero::Hero;
 
-mod navbar;
-pub use navbar::Navbar;
+
 
 mod echo;
 pub use echo::Echo;
 
 pub mod sidebar;
 pub use sidebar::{DocumentNode, NodeType, TreeNode, TreeView};
+
+pub mod landing_page;
+pub use landing_page::LandingPage;

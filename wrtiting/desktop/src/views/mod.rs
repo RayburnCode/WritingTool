@@ -14,4 +14,4 @@ mod footer;
 pub use footer::Footer;
 
 mod navbar;
-pub use navbar::Navbar;
+pub use navbar::DesktopNavbar;

@@ -1,51 +1,100 @@
 use crate::Route;
 use dioxus::prelude::*;
-// const LOGO: Asset = asset!("/assets/logo.png");
 
 #[component]
 pub fn DesktopNavbar(children: Element) -> Element {
-    let handle_click = move |_| {
-        println!("Button clicked!");
-    };
+    // Get the current route
+    let current_route = use_route::<Route>();
 
     rsx! {
-        nav { id: "navbar", class: "w-full  text-white shadow-md",
+        nav { id: "navbar", class: "w-full text-white shadow-md bg-gray-800",
             div { class: "px-8 py-2 mx-auto flex items-center justify-between",
-
-                // // Left side: Logo
-                // a { href: "https://rayburnlp.com",
-                //     img { class: "h-15", src: LOGO, alt: "Card header image" }
-                // }
-
-
                 // Right side: Links and Button
-                div { class: "flex gap-6 items-center text-sm text-gray-900",
+                div { class: "flex gap-6 items-center text-sm",
                     Link {
-                        to: Route::About {},
-                        class: "hover:text-blue-400 transition",
-                        "About"
+                        to: Route::Home {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::Home {})) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "Home"
                     }
                     Link {
-                        to: Route::Team {},
-                        class: "hover:text-blue-400 transition",
-                        "Team"
+                        to: Route::Blog { id: 1 },
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::Blog { .. })) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "Blog"
                     }
                     Link {
-                        to: Route::Pricing {},
-                        class: "hover:text-blue-400 transition",
-                        "Pricing"
+                        to: Route::TestingView {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::TestingView {})) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "Testing"
                     }
                     Link {
-                        to: Route::Resources {},
-                        class: "hover:text-blue-400 transition",
-                        "Resources"
+                        to: Route::Editor {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::Editor {})) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "✍️ Editor"
                     }
                     Link {
-                        to: Route::Contact {},
-                        class: "hover:text-blue-400 transition",
-                        "Contact"
+                        to: Route::FocusMode {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::FocusMode {})) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "🧠 Focus Mode"
                     }
-                
+                    Link {
+                        to: Route::Settings {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::Settings {})) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "⚙️ Settings"
+                    }
+                    Link {
+                        to: Route::Help {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Some(Route::Help {})) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "❓ Help"
+                    }
                 }
             }
         }
