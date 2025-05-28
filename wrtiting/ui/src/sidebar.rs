@@ -17,30 +17,28 @@ pub enum NodeType {
 }
 
 #[component]
-pub fn TreeView(cx: Scope, nodes: Vec<DocumentNode>, on_select: EventHandler<String>) -> Element {
-    cx.render(rsx! {
-        ul {
-            class: "space-y-1",
-            nodes.iter().map(|node| rsx! {
+pub fn TreeView( nodes: Vec<DocumentNode>, on_select: EventHandler<String>) -> Element {
+    rsx! {
+        ul { class: "space-y-1",
+            {nodes.iter().map(|node| rsx! {
                 TreeNode {
                     key: "{node.id}",
                     node: node.clone(),
-                    on_select: on_select,
+                    on_select,
                     level: 0,
                 }
-            })
+            })}
         }
-    })
+    }
 }
 
 #[component]
 pub fn TreeNode(
-    cx: Scope,
     node: DocumentNode,
     on_select: EventHandler<String>,
     level: usize,
 ) -> Element {
-    let is_expanded = use_state(cx, || node.is_expanded);
+    let mut is_expanded = use_signal(|| node.is_expanded);
     
     let icon = match node.node_type {
         NodeType::Chapter => "📖",
@@ -50,59 +48,48 @@ pub fn TreeNode(
 
     let padding_left = format!("pl-{}", level * 4 + 2);
 
-    cx.render(rsx! {
-        li {
-            class: "select-none",
+    rsx! {
+        li { class: "select-none",
             div {
                 class: "flex items-center hover:bg-gray-100 rounded-md py-1 pr-2 {padding_left}",
                 onclick: move |_| {
-                    is_expanded.set(!is_expanded);
+                    let expanded = *is_expanded.read();
+                    is_expanded.set(!expanded);
                     on_select.call(node.id.clone());
                 },
-                
                 // Expand/collapse icon
                 if !node.children.is_empty() {
-                    rsx! {
-                        span {
-                            class: "mr-1 text-gray-500",
-                            if *is_expanded.get() { "▾" } else { "▸" }
-                        }
+                    span { class: "mr-1 text-gray-500",
+                        {if *is_expanded.read() { "▾" } else { "▸" }}
                     }
                 } else {
-                    rsx! { span { class: "w-4" } }
+                    span { class: "w-4" }
                 }
-                
                 // Node icon and title
                 span { class: "mr-2", "{icon}" }
                 span { class: "flex-1 truncate", "{node.title}" }
-                
                 // Add button
                 button {
                     class: "ml-auto p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded",
                     onclick: move |e| {
                         e.stop_propagation();
-                        // Handle add child logic here
                     },
                     "+"
                 }
             }
-            
-            // Children
-            if *is_expanded.get() && !node.children.is_empty() {
-                rsx! {
-                    ul {
-                        class: "space-y-1",
-                        node.children.iter().map(|child| rsx! {
-                            TreeNode {
-                                key: "{child.id}",
-                                node: child.clone(),
-                                on_select: on_select,
-                                level: level + 1,
-                            }
-                        })
-                    }
+            // Children - removed the duplicate if statement
+            if *is_expanded.read() && !node.children.is_empty() {
+                ul { class: "space-y-1",
+                    {node.children.iter().map(|child| rsx! {
+                        TreeNode {
+                            key: "{child.id}",
+                            node: child.clone(),
+                            on_select,
+                            level: level + 1,
+                        }
+                    })}
                 }
             }
         }
-    })
+    }
 }

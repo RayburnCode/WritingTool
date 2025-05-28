@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use ui::Navbar;
-use views::{Blog, Home, Sidebar};
+use views::{Blog, Home, TestingView};
 
 mod views;
 
@@ -13,6 +13,8 @@ enum Route {
     Home {},
     #[route("/blog/:id")]
     Blog { id: i32 },
+    #[route("/testing")]
+    TestingView {},
 }
 
 const MAIN_CSS: Asset = asset!("/assets/main.css");
@@ -41,7 +43,7 @@ fn DesktopNavbar() -> Element {
         Navbar {
             Link { to: Route::Home {}, "Home" }
             Link { to: Route::Blog { id: 1 }, "Blog" }
-            Link { to: Route::Sidebar, "Testing" }
+            Link { to: Route::TestingView {}, "Testing" }
         }
 
         Outlet::<Route> {}

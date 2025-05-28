@@ -5,4 +5,4 @@ mod blog;
 pub use blog::Blog;
 
 mod testing;
-pub use testing::Sidebar;
+pub use testing::{TestingView};

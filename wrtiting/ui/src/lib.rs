@@ -8,3 +8,6 @@ pub use navbar::Navbar;
 
 mod echo;
 pub use echo::Echo;
+
+pub mod sidebar;
+pub use sidebar::{DocumentNode, NodeType, TreeNode, TreeView};
