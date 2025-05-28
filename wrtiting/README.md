@@ -1,4 +1,8 @@
+<!-- @format -->
+
 # Development
+
+npx @tailwindcss/cli -i ./input.css -o ./desktop/assets/tailwind.css --watch
 
 Your new workspace contains a member crate for each of the web, desktop and mobile platforms, a `ui` crate for shared components and a `api` crate for shared backend logic:
 
@@ -60,6 +64,7 @@ api/
 ### Serving Your App
 
 Navigate to the platform crate of your choice:
+
 ```bash
 cd web
 ```
@@ -69,4 +74,3 @@ and serve:
 ```bash
 dx serve
 ```
-

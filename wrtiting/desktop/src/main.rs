@@ -8,7 +8,10 @@ mod views;
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 enum Route {
+    //    #[layout(AppLayout)]
+
     #[layout(DesktopNavbar)]
+
     #[route("/")]
     Home {},
     #[route("/blog/:id")]
@@ -17,7 +20,8 @@ enum Route {
     TestingView {},
 }
 
-const MAIN_CSS: Asset = asset!("/assets/main.css");
+// Update the path if your CSS file is located elsewhere, e.g. "/assets/css/tailwind.css"
+const MAIN_CSS: Asset = asset!("/assets/tailwind.css");
 
 fn main() {
     dioxus::launch(App);
