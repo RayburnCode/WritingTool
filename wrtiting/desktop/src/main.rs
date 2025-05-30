@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use views::{AppLayout, Blog, Home, TestingView};
+use views::{AppLayout, Blog, Home, TestingView, Editor, FocusMode, Settings, HelpMain, HelpFaq, HelpContact, Login, NotFound};
 
 mod views;
 

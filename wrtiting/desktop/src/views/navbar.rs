@@ -15,7 +15,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         to: Route::Home {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::Home {})) {
+                            if matches!(current_route, Route::Home {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
@@ -27,7 +27,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         to: Route::Blog { id: 1 },
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::Blog { .. })) {
+                            if matches!(current_route, Route::Blog { .. }) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
@@ -39,7 +39,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         to: Route::TestingView {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::TestingView {})) {
+                            if matches!(current_route, Route::TestingView {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
@@ -51,7 +51,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         to: Route::Editor {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::Editor {})) {
+                            if matches!(current_route, Route::Editor {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
@@ -63,7 +63,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         to: Route::FocusMode {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::FocusMode {})) {
+                            if matches!(current_route, Route::FocusMode {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
@@ -75,7 +75,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         to: Route::Settings {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::Settings {})) {
+                            if matches!(current_route, Route::Settings {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
@@ -84,10 +84,10 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         "⚙️ Settings"
                     }
                     Link {
-                        to: Route::Help {},
+                        to: Route::HelpMain {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Some(Route::Help {})) {
+                            if matches!(current_route, Route::HelpMain {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
