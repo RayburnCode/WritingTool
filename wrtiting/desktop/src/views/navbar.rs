@@ -69,18 +69,18 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         ),
                         "🧠 Focus Mode"
                     }
-                    Link {
-                        to: Route::Settings {},
-                        class: format!(
-                            "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Route::Settings {}) {
-                                "text-blue-400 font-medium border-b-2 border-blue-400"
-                            } else {
-                                "text-gray-300"
-                            },
-                        ),
-                        "⚙️ Settings"
-                    }
+                    // Link {
+                    //     to: Route::Settings {},
+                    //     class: format!(
+                    //         "hover:text-blue-400 transition {}",
+                    //         if matches!(current_route, Route::Settings {}) {
+                    //             "text-blue-400 font-medium border-b-2 border-blue-400"
+                    //         } else {
+                    //             "text-gray-300"
+                    //         },
+                    //     ),
+                    //     "⚙️ Settings"
+                    // }
                     Link {
                         to: Route::HelpMain {},
                         class: format!(

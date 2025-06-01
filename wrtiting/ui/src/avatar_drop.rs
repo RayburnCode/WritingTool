@@ -24,10 +24,10 @@ pub fn AvatarDrop() -> Element {
                     div { class: "absolute right-0 z-50 mt-2 w-48 rounded-md shadow-lg bg-white dark:bg-gray-700",
                         div { class: "px-4 py-3 border-b border-gray-200 dark:border-gray-600",
                             span { class: "block text-sm text-gray-900 dark:text-white",
-                                "Bonnie Green"
+                                "Bonnie Testing"
                             }
                             span { class: "block text-sm text-gray-500 truncate dark:text-gray-400",
-                                "name@flowbite.com"
+                                "name@test.com"
                             }
                         }
                         ul { class: "py-1",
@@ -35,21 +35,28 @@ pub fn AvatarDrop() -> Element {
                                 a {
                                     href: "#",
                                     class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white",
-                                    "Dashboard"
+                                    "Profile"
                                 }
                             }
                             li {
                                 a {
                                     href: "#",
                                     class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white",
-                                    "Settings"
+                                    "Account Settings"
                                 }
                             }
                             li {
                                 a {
                                     href: "#",
                                     class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white",
-                                    "Sign out"
+                                    "Light Dark Toggle"
+                                }
+                            }
+                            li {
+                                a {
+                                    href: "#",
+                                    class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white",
+                                    "Sign Out"
                                 }
                             }
                         }
