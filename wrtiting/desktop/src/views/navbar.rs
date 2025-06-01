@@ -1,19 +1,19 @@
-use crate::Route;
+use crate::{state::Theme, Route};
 use dioxus::prelude::*;
+use ui::AvatarDrop;
 
 #[component]
 pub fn DesktopNavbar(children: Element) -> Element {
     // Get the current route
     let current_route = use_route::<Route>();
 
-    let theme = use_theme();
-    let dark_mode = **theme.read() == Theme::Dark;
+    let mut theme = use_signal(|| Theme::Light);
+    let dark_mode = *theme.read() == Theme::Dark;
 
     let toggle_theme = move |_| {
         let new_theme = if dark_mode { Theme::Light } else { Theme::Dark };
-        theme.write().set(new_theme);
+        *theme.write() = new_theme;
     };
-
 
     rsx! {
         nav { id: "navbar", class: "w-full text-white shadow-md bg-gray-800",
@@ -102,6 +102,8 @@ pub fn DesktopNavbar(children: Element) -> Element {
                             "🌙 Dark"
                         }
                     }
+
+                    AvatarDrop {}
                                 // input {
                 //     class: "px-2 py-1 rounded bg-gray-700 text-white",
                 //     placeholder: "Search...",

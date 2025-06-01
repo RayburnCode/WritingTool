@@ -1,13 +1,20 @@
-/// A shared state for the theme, which can be used across components
+// writing/desktop/src/state/theme.rs
+use dioxus::prelude::*;
+
+/// Theme variants (Dark/Light)
 #[derive(Clone, Copy, Debug, PartialEq)]
 pub enum Theme {
     Dark,
     Light,
 }
 
-pub fn use_theme(cx: &ScopeState) -> &UseSharedState<Theme> {
-    use_context::<UseSharedState<Theme>>().expect("Theme context not provided")
+/// Initialize the theme provider (call this in `main.rs`)
+pub fn init_theme() -> Signal<Theme> {
+    // Provide a Signal<Theme> to the component tree (default: Dark)
+    use_hook(|| Signal::new(Theme::Dark))
 }
 
-
-    use_shared_state_provider(|| Theme::Dark); // Default to dark
+/// Hook to access the theme Signal from any component
+pub fn use_theme() -> Signal<Theme> {
+    consume_context::<Signal<Theme>>()
+}
