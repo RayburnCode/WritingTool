@@ -5,8 +5,6 @@ pub use home::Home;
 mod blog;
 pub use blog::Blog;
 
-mod testing;
-pub use testing::{TestingView};
 
 mod layout;
 pub use layout::AppLayout;

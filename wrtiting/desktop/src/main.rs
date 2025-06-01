@@ -1,6 +1,6 @@
 use dioxus::prelude::*;
 
-use views::{AppLayout, Blog, Home, TestingView, Editor, FocusMode, Settings, HelpMain, HelpFaq, HelpContact, Login, NotFound};
+use views::{AppLayout, Blog, Home, Editor, FocusMode, Settings, HelpMain, HelpFaq, HelpContact, Login, NotFound};
 
 mod views;
 
@@ -14,8 +14,6 @@ pub enum Route {
         #[route("/blog/:id")]
         Blog { id: i32 },
         
-        #[route("/testing")]
-        TestingView {},
         
         #[route("/editor")]
         Editor {},
@@ -46,6 +44,10 @@ pub enum Route {
     NotFound {},
 }
 
+
+
+
+
 // Update the path if your CSS file is located elsewhere, e.g. "/assets/css/tailwind.css"
 const MAIN_CSS: Asset = asset!("/assets/tailwind.css");
 
@@ -57,6 +59,7 @@ fn main() {
 fn App() -> Element {
 
     rsx! {
+
         // Global app resources
         document::Link { rel: "stylesheet", href: MAIN_CSS }
 

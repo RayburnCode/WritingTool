@@ -6,6 +6,15 @@ pub fn DesktopNavbar(children: Element) -> Element {
     // Get the current route
     let current_route = use_route::<Route>();
 
+    let theme = use_theme();
+    let dark_mode = **theme.read() == Theme::Dark;
+
+    let toggle_theme = move |_| {
+        let new_theme = if dark_mode { Theme::Light } else { Theme::Dark };
+        theme.write().set(new_theme);
+    };
+
+
     rsx! {
         nav { id: "navbar", class: "w-full text-white shadow-md bg-gray-800",
             div { class: "px-8 py-2 mx-auto flex items-center justify-between",
@@ -35,18 +44,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         ),
                         "Blog"
                     }
-                    Link {
-                        to: Route::TestingView {},
-                        class: format!(
-                            "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Route::TestingView {}) {
-                                "text-blue-400 font-medium border-b-2 border-blue-400"
-                            } else {
-                                "text-gray-300"
-                            },
-                        ),
-                        "Testing"
-                    }
+
                     Link {
                         to: Route::Editor {},
                         class: format!(
@@ -95,6 +93,20 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         ),
                         "❓ Help"
                     }
+                    button {
+                        onclick: toggle_theme,
+                        class: "hover:text-blue-400 transition text-gray-300",
+                        if dark_mode {
+                            "☀️ Light"
+                        } else {
+                            "🌙 Dark"
+                        }
+                    }
+                                // input {
+                //     class: "px-2 py-1 rounded bg-gray-700 text-white",
+                //     placeholder: "Search...",
+                //     oninput: move |e| set_search_query(e.value()),
+                // }
                 }
             }
         }
