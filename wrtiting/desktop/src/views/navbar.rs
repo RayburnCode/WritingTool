@@ -17,35 +17,38 @@ pub fn DesktopNavbar(children: Element) -> Element {
     let mut theme = use_signal(|| Theme::Light);
     let dark_mode = *theme.read() == Theme::Dark;
 
-    let mut toggle_theme = move |_: Event<MouseData>| {
+    let toggle_theme = move |_: Event<MouseData>| {
         let new_theme = if dark_mode { Theme::Light } else { Theme::Dark };
         *theme.write() = new_theme;
     };
 
-    // Define menu items inside the component
-    let menu_items = vec![
+  let menu_items = vec![
+
         MenuItem {
             label: "Profile".to_string(),
-            href: "/profile".to_string(),
+            to: "/profile".to_string(),  // Use string paths
             onclick: None,
         },
         MenuItem {
             label: "Account Settings".to_string(),
-            href: "/settings".to_string(),
+            to: "/settings".to_string(),
             onclick: None,
         },
-        MenuItem {
-            label: "Light/Dark Toggle".to_string(),
-            href: "#".to_string(),
-            onclick: Some(Callback::new(move |event| {
-                toggle_theme(event);
-            })),
+                MenuItem {
+            label: "Toggle Light and dark".to_string(),
+            to: "/settings".to_string(),
+            onclick: None,
         },
+            MenuItem {
+    label: "Help Center".to_string(),
+    to: "/help".to_string(),
+    onclick: None,
+},
         MenuItem {
-            label: "Sign Out".to_string(),
-            href: "#".to_string(),
-            onclick: Some(Callback::new(move |_| {
-                // Handle sign out here
+            label: "Sign out".to_string(),
+            to: "#".to_string(),
+            onclick: Some(EventHandler::new(|_| {
+                // Handle sign out
             })),
         },
     ];
@@ -105,18 +108,18 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         "🧠 Focus Mode"
                     }
 
-                    Link {
-                        to: Route::HelpMain {},
-                        class: format!(
-                            "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Route::HelpMain {}) {
-                                "text-blue-400 font-medium border-b-2 border-blue-400"
-                            } else {
-                                "text-gray-300"
-                            },
-                        ),
-                        "❓ Help"
-                    }
+                    // Link {
+                    //     to: Route::HelpMain {},
+                    //     class: format!(
+                    //         "hover:text-blue-400 transition {}",
+                    //         if matches!(current_route, Route::HelpMain {}) {
+                    //             "text-blue-400 font-medium border-b-2 border-blue-400"
+                    //         } else {
+                    //             "text-gray-300"
+                    //         },
+                    //     ),
+                    //     "❓ Help"
+                    // }
                     button {
                         onclick: toggle_theme,
                         class: "hover:text-blue-400 transition text-gray-300",

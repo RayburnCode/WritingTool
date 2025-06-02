@@ -944,6 +944,7 @@ version = "0.1.0"
 dependencies = [
  "chrono",
  "dioxus",
+ "tokio",
  "ui",
 ]
 
@@ -5490,6 +5491,8 @@ dependencies = [
  "serde",
  "serde_json",
  "tokio",
+ "wasm-bindgen",
+ "web-sys",
 ]
 
 [[package]]
