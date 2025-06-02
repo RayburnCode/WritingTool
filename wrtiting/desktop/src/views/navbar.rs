@@ -1,7 +1,14 @@
-use crate::{state::Theme, Route};
+// writing/desktop/src/views/navbar.rs
 use dioxus::prelude::*;
-use ui::AvatarDrop;
+use crate::{
+    state::Theme, 
+    Route,
+};
 
+use ui::{
+    AvatarDrop, 
+    MenuItem,
+};
 #[component]
 pub fn DesktopNavbar(children: Element) -> Element {
     // Get the current route
@@ -10,10 +17,38 @@ pub fn DesktopNavbar(children: Element) -> Element {
     let mut theme = use_signal(|| Theme::Light);
     let dark_mode = *theme.read() == Theme::Dark;
 
-    let toggle_theme = move |_| {
+    let mut toggle_theme = move |_: Event<MouseData>| {
         let new_theme = if dark_mode { Theme::Light } else { Theme::Dark };
         *theme.write() = new_theme;
     };
+
+    // Define menu items inside the component
+    let menu_items = vec![
+        MenuItem {
+            label: "Profile".to_string(),
+            href: "/profile".to_string(),
+            onclick: None,
+        },
+        MenuItem {
+            label: "Account Settings".to_string(),
+            href: "/settings".to_string(),
+            onclick: None,
+        },
+        MenuItem {
+            label: "Light/Dark Toggle".to_string(),
+            href: "#".to_string(),
+            onclick: Some(Callback::new(move |event| {
+                toggle_theme(event);
+            })),
+        },
+        MenuItem {
+            label: "Sign Out".to_string(),
+            href: "#".to_string(),
+            onclick: Some(Callback::new(move |_| {
+                // Handle sign out here
+            })),
+        },
+    ];
 
     rsx! {
         nav { id: "navbar", class: "w-full text-white shadow-md bg-gray-800",
@@ -69,18 +104,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         ),
                         "🧠 Focus Mode"
                     }
-                    // Link {
-                    //     to: Route::Settings {},
-                    //     class: format!(
-                    //         "hover:text-blue-400 transition {}",
-                    //         if matches!(current_route, Route::Settings {}) {
-                    //             "text-blue-400 font-medium border-b-2 border-blue-400"
-                    //         } else {
-                    //             "text-gray-300"
-                    //         },
-                    //     ),
-                    //     "⚙️ Settings"
-                    // }
+
                     Link {
                         to: Route::HelpMain {},
                         class: format!(
@@ -103,12 +127,11 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         }
                     }
 
-                    AvatarDrop {}
-                                // input {
-                //     class: "px-2 py-1 rounded bg-gray-700 text-white",
-                //     placeholder: "Search...",
-                //     oninput: move |e| set_search_query(e.value()),
-                // }
+                    AvatarDrop {
+                        name: "Bonnie Testing",
+                        email: "name@test.com",
+                        menu_items,
+                    }
                 }
             }
         }

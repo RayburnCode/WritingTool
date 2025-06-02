@@ -2,6 +2,7 @@ use dioxus::prelude::*;
 
 use state::Theme;
 use views::{AppLayout, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, Login, NotFound};
+use views::profile::{AccountSettings, Profile};
 mod views;
 mod state;
 
@@ -22,8 +23,10 @@ pub enum Route {
         #[route("/focus")]
         FocusMode {},
         
-        // #[route("/settings")]
-        // Settings {},
+        #[route("/settings")]
+        AccountSettings {},
+                #[route("/profile")]
+        Profile {},
         
         #[nest("/help")]
             #[route("/")]

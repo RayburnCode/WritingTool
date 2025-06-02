@@ -1,3 +1,5 @@
+pub mod profile;
+
 mod home;
 pub use home::Home;
 
