@@ -1,6 +1,6 @@
 //! This crate contains all shared UI for the workspace.
 
-mod auth;
+pub mod auth;
 
 mod hero;
 pub use hero::Hero;

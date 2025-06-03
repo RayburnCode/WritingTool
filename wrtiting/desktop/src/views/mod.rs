@@ -27,8 +27,9 @@ pub use focus_mode::FocusMode;
 mod help;
 pub use help::{HelpMain, HelpFaq, HelpContact};
 
-mod login;
-pub use login::Login;
 
 mod not_found;
 pub use not_found::NotFound;
+
+pub mod auth_pages;
+pub use auth_pages::AuthPages;

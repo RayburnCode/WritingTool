@@ -108,18 +108,19 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         "🧠 Focus Mode"
                     }
 
-                    // Link {
-                    //     to: Route::HelpMain {},
-                    //     class: format!(
-                    //         "hover:text-blue-400 transition {}",
-                    //         if matches!(current_route, Route::HelpMain {}) {
-                    //             "text-blue-400 font-medium border-b-2 border-blue-400"
-                    //         } else {
-                    //             "text-gray-300"
-                    //         },
-                    //     ),
-                    //     "❓ Help"
-                    // }
+                    Link {
+                        to: Route::AuthPages {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Route::AuthPages {}) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        {}
+                        "Auth Pages"
+                    }
                     button {
                         onclick: toggle_theme,
                         class: "hover:text-blue-400 transition text-gray-300",

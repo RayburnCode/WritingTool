@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use state::Theme;
-use views::{AppLayout, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, Login, NotFound};
+use views::{AppLayout, AuthPages, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, NotFound};
 use views::profile::{AccountSettings, Profile};
 mod views;
 mod state;
@@ -16,18 +16,27 @@ pub enum Route {
         #[route("/blog/:id")]
         Blog { id: i32 },
         
-        
         #[route("/editor")]
         Editor {},
-        
+
         #[route("/focus")]
         FocusMode {},
         
         #[route("/settings")]
         AccountSettings {},
-                #[route("/profile")]
+
+        #[route("/profile")]
         Profile {},
         
+        #[route("/authpages")]
+        AuthPages {},
+        // #[route("/login")]
+        // Login {},
+        // #[route("/register")]
+        // Register {},
+        // #[route("/reset-password")]
+        // ResetPassword {},
+    
         #[nest("/help")]
             #[route("/")]
             HelpMain {},
@@ -40,9 +49,7 @@ pub enum Route {
         #[end_nest]
         
     #[end_layout]
-    
-    #[route("/login")]
-    Login {},
+
     
     #[route("/404")]
     NotFound { route: Vec<String> },
