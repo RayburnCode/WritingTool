@@ -1,10 +1,7 @@
-use dioxus::{html::p, prelude::*};
+// client/components/auth/login.rs
+use dioxus::prelude::*;
 use crate::auth::AuthRoute;
-// Import or define your Route type here
-
-
-
-
+use crate::auth::common::{AuthFormContainer, AuthInputField, AuthButton, AuthLink};
 
 #[derive(Default, Clone)]
 struct LoginForm {
@@ -35,9 +32,8 @@ pub fn Login() -> Element {
                 error.set(Some("Please enter a valid email".to_string()));
             } else {
                 // Successful login
-                // navigator.push(Route::Home {});
-                /// WILL NEED TO CHANGE THIS TO YOUR ACTUAL ROUTE
                 println!("Logged in with email: {}", form.read().email);
+                navigator.push(AuthRoute::Home {});
             }
             
             loading.set(false);
@@ -45,94 +41,74 @@ pub fn Login() -> Element {
     };
 
     rsx! {
-        div { class: "min-h-screen flex items-center justify-center bg-gray-50",
-            div { class: "w-full max-w-md p-8 space-y-8 bg-white rounded-lg shadow",
-                div { class: "text-center",
-                    if let Some(err) = &*error.read() {
-                        div { class: "p-4 text-sm text-red-600 bg-red-50 rounded-md",
-                            p { "{err}" }
+        AuthFormContainer {
+            title: "Sign in to your account",
+            footer: rsx! {
+                AuthLink {
+                    to: AuthRoute::Register {},
+                    text: "Don't have an account?",
+                    link_text: "Sign up",
+                }
+            },
+
+            form { class: "mt-8 space-y-6", onsubmit: handle_submit,
+                if let Some(err) = error.read().as_ref() {
+                    div { class: "p-4 text-sm text-red-600 bg-red-50 rounded-md",
+                        p { "{err}" }
+                    }
+                }
+
+                div { class: "space-y-4",
+                    AuthInputField {
+                        id: "email",
+                        label: "Email address",
+                        r#type: "email",
+                        value: form.read().email.clone(),
+                        disabled: loading(),
+                        oninput: move |e| form.with_mut(|f| f.email = e.value()),
+                        error: None,
+                    }
+
+                    AuthInputField {
+                        id: "password",
+                        label: "Password",
+                        r#type: "password",
+                        value: form.read().password.clone(),
+                        disabled: *loading.get(),
+                        oninput: move |e| form.with_mut(|f| f.password = e.value()),
+                        error: None,
+                    }
+                }
+
+                div { class: "flex items-center justify-between",
+                    div { class: "flex items-center",
+                        input {
+                            r#type: "checkbox",
+                            id: "remember-me",
+                            checked: form.read().remember,
+                            onchange: move |e| form.with_mut(|f| f.remember = e.value().parse().unwrap_or(false)),
+                            class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded",
+                        }
+                        label {
+                            r#for: "remember-me",
+                            class: "ml-2 block text-sm text-gray-900",
+                            "Remember me"
+                        }
+                    }
+
+                    div { class: "text-sm",
+                        Link {
+                            to: AuthRoute::ResetPassword {},
+                            class: "font-medium text-indigo-600 hover:text-indigo-500",
+                            "Forgot password?"
                         }
                     }
                 }
 
-                form { class: "mt-8 space-y-6", onsubmit: handle_submit,
-                    input { r#type: "hidden", name: "remember", value: "true" }
-
-                    div { class: "space-y-4",
-                        div {
-                            label {
-                                r#for: "email",
-                                class: "block text-sm font-medium text-gray-700",
-                                "Email address"
-                            }
-                            input {
-                                id: "email",
-                                value: "{form.read().email}",
-                                disabled: *loading.read(),
-                                oninput: move |e| form.with_mut(|f| f.email = e.value().to_string()),
-                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
-                            }
-                        }
-
-                        div {
-                            label {
-                                r#for: "password",
-                                class: "block text-sm font-medium text-gray-700",
-                                "Password"
-                            }
-                            input {
-                                id: "password",
-                                value: "{form.read().password}",
-                                disabled: *loading.read(),
-                                oninput: move |e| form.with_mut(|f| f.password = e.value().to_string()),
-                                class: "w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-indigo-500 focus:border-indigo-500",
-                            }
-                        }
-                    }
-
-                    div { class: "flex items-center justify-between",
-                        div { class: "flex items-center",
-                            input {
-                                r#type: "checkbox",
-                                id: "remember-me",
-                                checked: form.read().remember,
-                                onchange: move |e| form.with_mut(|f| f.remember = e.value().parse().unwrap_or(false)),
-                                class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded",
-                            }
-                            label {
-                                r#for: "remember-me",
-                                class: "ml-2 block text-sm text-gray-900",
-                                "Remember me"
-                            }
-                        }
-
-                        div { class: "text-sm",
-                            Link {
-                                to: AuthRoute::ResetPassword {},
-                                class: "font-medium text-indigo-600 hover:text-indigo-500",
-                                "Forgot your password?"
-                            }
-                        }
-                    }
-
-                    button {
-                        r#type: "submit",
-                        disabled: *loading.read(),
-                        class: "w-full flex justify-center py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500",
-                        if *loading.read() {
-                            "Signing in..."
-                        } else {
-                            "Sign in"
-                        }
-                    }
-                }
-
-                div { class: "text-center text-sm",
-                    Link {
-                        to: AuthRoute::Register {},
-                        class: "font-medium text-indigo-600 hover:text-indigo-500",
-                        "Don't have an account? Sign up"
-                    }
+                AuthButton {
+                    loading: *loading.get(),
+                    label: "Sign in",
+                    loading_label: "Signing in...",
                 }
             }
         }
