@@ -15,6 +15,7 @@ pub use common::{AuthFormContainer, AuthLink, AuthLinkProps, AuthFormContainerPr
 #[derive(Debug, Clone, Routable, PartialEq)]
 #[rustfmt::skip]
 pub enum AuthRoute {
+
         #[route("/login")]
         Login {},
         #[route("/register")]

@@ -33,9 +33,9 @@ pub fn Login() -> Element {
             } else {
                 // Successful login
                 println!("Logged in with email: {}", form.read().email);
-                navigator.push(AuthRoute::Home {});
+                navigator.push("/");
             }
-            
+
             loading.set(false);
         });
     };
@@ -65,7 +65,7 @@ pub fn Login() -> Element {
                         r#type: "email",
                         value: form.read().email.clone(),
                         disabled: loading(),
-                        oninput: move |e| form.with_mut(|f| f.email = e.value()),
+                        oninput: move |e: dioxus::events::FormEvent| form.with_mut(|f| f.email = e.value()),
                         error: None,
                     }
 
@@ -74,8 +74,8 @@ pub fn Login() -> Element {
                         label: "Password",
                         r#type: "password",
                         value: form.read().password.clone(),
-                        disabled: *loading.get(),
-                        oninput: move |e| form.with_mut(|f| f.password = e.value()),
+                        disabled: loading(),
+                        oninput: move |e: dioxus::events::FormEvent| form.with_mut(|f| f.password = e.value()),
                         error: None,
                     }
                 }
@@ -106,7 +106,7 @@ pub fn Login() -> Element {
                 }
 
                 AuthButton {
-                    loading: *loading.get(),
+                    loading: loading(),
                     label: "Sign in",
                     loading_label: "Signing in...",
                 }

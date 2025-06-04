@@ -1,3 +1,5 @@
+// wrtiting/desktop/src/views/auth_pages.rs
+
 use dioxus::prelude::*;
 use ui::auth::{Login, Register, ResetPassword, AuthRoute};
 

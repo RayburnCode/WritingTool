@@ -104,49 +104,53 @@ pub fn AuthLink(props: AuthLinkProps) -> Element {
 
 
 
-#[derive(Props)]
-pub struct AuthCheckboxProps<'a> {
-    id: &'a str,
-    label: &'a str,
+#[derive(Props, Clone, PartialEq)]
+pub struct AuthCheckboxProps {
+    id: String,
+    label: String,
     checked: bool,
-    onchange: EventHandler<'a, FormEvent>,
+    onchange: EventHandler<FormEvent>,
 }
 
 #[component]
-pub fn AuthCheckbox<'a>(props: AuthCheckboxProps<'a>) -> Element {
+pub fn AuthCheckbox(props: AuthCheckboxProps) -> Element {
     rsx! {
         div { class: "flex items-center",
             input {
                 r#type: "checkbox",
-                id: props.id,
+                id: props.id.clone(),
                 checked: props.checked,
                 onchange: move |e| props.onchange.call(e),
                 class: "h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded",
             }
-            label { r#for: props.id, class: "ml-2 block text-sm text-gray-900", "{props.label}" }
+            label {
+                r#for: props.id.clone(),
+                class: "ml-2 block text-sm text-gray-900",
+                "{props.label}"
+            }
         }
     }
 }
 
-#[derive(Props)]
-pub struct AuthInfoTextProps<'a> {
-    text: &'a str,
+#[derive(Props, Clone, PartialEq)]
+pub struct AuthInfoTextProps {
+    text: String,
 }
 
 #[component]
-pub fn AuthInfoText<'a>(props: AuthInfoTextProps<'a>) -> Element {
+pub fn AuthInfoText(props: AuthInfoTextProps) -> Element {
     rsx! {
         div { class: "text-sm text-gray-600", "{props.text}" }
     }
 }
 
-#[derive(Props)]
-pub struct AuthErrorAlertProps<'a> {
-    message: &'a str,
+#[derive(Props, Clone, PartialEq)]
+pub struct AuthErrorAlertProps {
+    message: String,
 }
 
 #[component]
-pub fn AuthErrorAlert<'a>(props: AuthErrorAlertProps<'a>) -> Element {
+pub fn AuthErrorAlert(props: AuthErrorAlertProps) -> Element {
     rsx! {
         div { class: "p-4 text-sm text-red-600 bg-red-50 rounded-md",
             p { "{props.message}" }
@@ -154,13 +158,13 @@ pub fn AuthErrorAlert<'a>(props: AuthErrorAlertProps<'a>) -> Element {
     }
 }
 
-#[derive(Props)]
-pub struct AuthSuccessAlertProps<'a> {
-    message: &'a str,
+#[derive(Props, Clone, PartialEq)]
+pub struct AuthSuccessAlertProps {
+    message: String,
 }
 
 #[component]
-pub fn AuthSuccessAlert<'a>(props: AuthSuccessAlertProps<'a>) -> Element {
+pub fn AuthSuccessAlert(props: AuthSuccessAlertProps) -> Element {
     rsx! {
         div { class: "p-4 text-sm text-green-600 bg-green-50 rounded-md",
             p { "{props.message}" }
