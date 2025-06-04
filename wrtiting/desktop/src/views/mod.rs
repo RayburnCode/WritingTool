@@ -31,5 +31,3 @@ pub use help::{HelpMain, HelpFaq, HelpContact};
 mod not_found;
 pub use not_found::NotFound;
 
-pub mod auth_pages;
-pub use auth_pages::AuthPages;

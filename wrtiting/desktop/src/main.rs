@@ -1,8 +1,9 @@
 use dioxus::prelude::*;
 
 use state::Theme;
-use views::{AppLayout, AuthPages, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, NotFound};
+use views::{AppLayout, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, NotFound};
 use views::profile::{AccountSettings, Profile};
+use ui::auth::{Login, Register, ResetPassword};
 mod views;
 mod state;
 
@@ -28,14 +29,17 @@ pub enum Route {
         #[route("/profile")]
         Profile {},
         
-        #[route("/authpages")]
-        AuthPages {},
-        // #[route("/login")]
-        // Login {},
-        // #[route("/register")]
-        // Register {},
-        // #[route("/reset-password")]
-        // ResetPassword {},
+         #[nest("/auth")]
+
+            #[route("/login")]
+            Login {},
+            
+            #[route("/register")]
+            Register {},
+            
+            #[route("/reset-password")]
+            ResetPassword {},
+        #[end_nest]
     
         #[nest("/help")]
             #[route("/")]

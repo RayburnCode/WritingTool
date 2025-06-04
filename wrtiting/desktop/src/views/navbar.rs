@@ -107,20 +107,44 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         ),
                         "🧠 Focus Mode"
                     }
-
                     Link {
-                        to: Route::AuthPages {},
+                        to: Route::Login {},
                         class: format!(
                             "hover:text-blue-400 transition {}",
-                            if matches!(current_route, Route::AuthPages {}) {
+                            if matches!(current_route, Route::Login {}) {
                                 "text-blue-400 font-medium border-b-2 border-blue-400"
                             } else {
                                 "text-gray-300"
                             },
                         ),
-                        {}
-                        "Auth Pages"
+                        "Login"
                     }
+                    Link {
+                        to: Route::Register {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Route::Register {}) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "Register"
+                    }
+                    Link {
+                        to: Route::ResetPassword {},
+                        class: format!(
+                            "hover:text-blue-400 transition {}",
+                            if matches!(current_route, Route::ResetPassword {}) {
+                                "text-blue-400 font-medium border-b-2 border-blue-400"
+                            } else {
+                                "text-gray-300"
+                            },
+                        ),
+                        "Reset Password"
+                    }
+
+
                     button {
                         onclick: toggle_theme,
                         class: "hover:text-blue-400 transition text-gray-300",

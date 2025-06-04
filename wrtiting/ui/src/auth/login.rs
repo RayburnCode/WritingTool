@@ -1,6 +1,5 @@
 // client/components/auth/login.rs
 use dioxus::prelude::*;
-use crate::auth::AuthRoute;
 use crate::auth::common::{AuthFormContainer, AuthInputField, AuthButton, AuthLink};
 
 #[derive(Default, Clone)]
@@ -45,7 +44,7 @@ pub fn Login() -> Element {
             title: "Sign in to your account",
             footer: rsx! {
                 AuthLink {
-                    to: AuthRoute::Register {},
+                    to: "/auth/register",
                     text: "Don't have an account?",
                     link_text: "Sign up",
                 }
@@ -98,7 +97,7 @@ pub fn Login() -> Element {
 
                     div { class: "text-sm",
                         Link {
-                            to: AuthRoute::ResetPassword {},
+                            to: "/auth/reset-password", // Simple string path
                             class: "font-medium text-indigo-600 hover:text-indigo-500",
                             "Forgot password?"
                         }

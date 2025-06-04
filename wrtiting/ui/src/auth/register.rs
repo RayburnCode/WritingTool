@@ -1,6 +1,5 @@
 // client/components/auth/register.rs
 use dioxus::prelude::*;
-use crate::auth::AuthRoute;
 use crate::auth::common::{AuthFormContainer, AuthInputField, AuthButton, AuthLink};
 
 #[derive(Default, Clone)]
@@ -41,7 +40,7 @@ pub fn Register() -> Element {
             } else {
                 // Successful registration
                 println!("Registered with email: {}", form.read().email);
-                navigator.push(AuthRoute::Login {});
+                navigator.push("/auth/login");
             }
             
             loading.set(false);
@@ -53,7 +52,7 @@ pub fn Register() -> Element {
             title: "Create a new account",
             footer: rsx! {
                 AuthLink {
-                    to: AuthRoute::Login {},
+                    to: "/auth/login",
                     text: "Already have an account?",
                     link_text: "Sign in",
                 }

@@ -1,6 +1,5 @@
 // client/components/auth/reset_password.rs
 use dioxus::prelude::*;
-use crate::auth::AuthRoute;
 use crate::auth::common::{AuthFormContainer, AuthInputField, AuthButton, AuthLink};
 
 #[derive(Default, Clone)]
@@ -42,7 +41,7 @@ pub fn ResetPassword() -> Element {
             title: "Reset your password",
             footer: rsx! {
                 AuthLink {
-                    to: AuthRoute::Login {},
+                    to: "/auth/login",
                     text: "Remember your password?",
                     link_text: "Sign in",
                 }

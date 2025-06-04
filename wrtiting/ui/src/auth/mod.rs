@@ -12,17 +12,4 @@ pub use state::{Notification, NotificationType, LoginForm, FormErrors, LoginStat
 pub use common::{AuthFormContainer, AuthLink, AuthLinkProps, AuthFormContainerProps, AuthInputField, AuthInputFieldProps, AuthButton, AuthButtonProps};
 
 
-#[derive(Debug, Clone, Routable, PartialEq)]
-#[rustfmt::skip]
-pub enum AuthRoute {
 
-        #[route("/login")]
-        Login {},
-        #[route("/register")]
-        Register {},
-        #[route("/reset-password")]
-        ResetPassword {},
-
-
-
-}
