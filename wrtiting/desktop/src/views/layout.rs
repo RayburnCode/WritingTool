@@ -12,7 +12,7 @@ pub fn AppLayout() -> Element {
         div { class: "flex flex-col min-h-screen",
             DesktopNavbar {}
             main { class: " flex-1",
-                div { class: "mx-auto px-8 py-6", Outlet::<Route> {} }
+                div { class: "mx-auto px-4 py-6", Outlet::<Route> {} }
             }
             Footer {}
         }
