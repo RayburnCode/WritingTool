@@ -11,7 +11,7 @@ pub struct AvatarDropProps {
 #[derive(Clone, PartialEq)]
 pub struct MenuItem {
     pub label: String,
-    pub to: String,
+    pub to: Option<String>,  
     pub onclick: Option<EventHandler<MouseEvent>>,
 }
 
@@ -50,16 +50,29 @@ pub fn AvatarDrop(props: AvatarDropProps) -> Element {
                     ul { class: "py-1",
                         for item in props.menu_items.iter().cloned() {
                             li {
-                                Link {
-                                    to: item.to.clone(),
-                                    class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white",
-                                    onclick: move |evt| {
-                                        show_dropdown.set(false);
-                                        if let Some(handler) = item.onclick.clone() {
-                                            handler.call(evt);
-                                        }
-                                    },
-                                    {item.label.as_str()}
+                                if let Some(to) = item.to.clone() {
+                                    Link {
+                                        to,
+                                        class: "block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white",
+                                        onclick: move |evt| {
+                                            show_dropdown.set(false);
+                                            if let Some(handler) = item.onclick.clone() {
+                                                handler.call(evt);
+                                            }
+                                        },
+                                        {item.label.as_str()}
+                                    }
+                                } else {
+                                    span {
+                                        class: "block px-4 py-2 text-sm text-gray-700 dark:text-gray-200",
+                                        onclick: move |evt| {
+                                            show_dropdown.set(false);
+                                            if let Some(handler) = item.onclick.clone() {
+                                                handler.call(evt);
+                                            }
+                                        },
+                                        {item.label.as_str()}
+                                    }
                                 }
                             }
                         }

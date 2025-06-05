@@ -6,3 +6,7 @@ use dioxus::prelude::*;
 pub async fn echo(input: String) -> Result<String, ServerFnError> {
     Ok(input)
 }
+
+
+mod ollama;
+pub use ollama::send_prompt_to_ollama;

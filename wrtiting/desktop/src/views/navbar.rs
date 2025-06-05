@@ -26,27 +26,27 @@ pub fn DesktopNavbar(children: Element) -> Element {
 
         MenuItem {
             label: "Profile".to_string(),
-            to: "/profile".to_string(),  // Use string paths
+            to: Some("/profile".to_string()),  // Use string paths
             onclick: None,
         },
         MenuItem {
             label: "Account Settings".to_string(),
-            to: "/settings".to_string(),
+            to: Some("/settings".to_string()),
             onclick: None,
         },
                 MenuItem {
             label: "Toggle Light and dark".to_string(),
-            to: "/settings".to_string(),
-            onclick: None,
+            to: None,
+            onclick: Some(EventHandler::new(toggle_theme)),
         },
             MenuItem {
     label: "Help Center".to_string(),
-    to: "/help".to_string(),
+    to: Some("/help".to_string()),
     onclick: None,
 },
         MenuItem {
             label: "Sign out".to_string(),
-            to: "#".to_string(),
+            to: Some("#".to_string()),
             onclick: Some(EventHandler::new(|_| {
                 // Handle sign out
             })),
@@ -93,7 +93,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                                 "text-gray-300"
                             },
                         ),
-                        "✍️ Editor"
+                        "Editor"
                     }
                     Link {
                         to: Route::FocusMode {},
@@ -105,7 +105,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                                 "text-gray-300"
                             },
                         ),
-                        "🧠 Focus Mode"
+                        "Focus Mode"
                     }
                     Link {
                         to: Route::Login {},

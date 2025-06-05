@@ -9,7 +9,7 @@ mod echo;
 pub use echo::Echo;
 
 pub mod sidebar;
-pub use sidebar::{DocumentNode, NodeType, TreeNode, TreeView};
+pub use sidebar::{DocumentNode, NodeType, TreeNode, TreeView, Sidebar};
 
 pub mod landing_page;
 pub use landing_page::LandingPage;

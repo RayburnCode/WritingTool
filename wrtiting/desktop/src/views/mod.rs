@@ -1,5 +1,5 @@
 pub mod profile;
-
+pub mod ai;
 mod home;
 pub use home::Home;
 

@@ -3,7 +3,7 @@ use dioxus::prelude::*;
 // Update the path below to the correct module location for components
 // wrtiting/ui/components/mod.rs
 // wrtiting/desktop/src/views/testing.rs
-use ui::{DocumentNode, NodeType, TreeView};
+use ui::{DocumentNode, NodeType, Sidebar};
 
 
 #[component]
@@ -72,28 +72,3 @@ pub fn Editor() -> Element {
     }
 }
 
-#[component]
-pub fn Sidebar(
-    documents: Vec<DocumentNode>,
-    on_select: EventHandler<String>,
-) -> Element {
-   rsx! {
-    aside { class: "w-64 h-full bg-white border-r border-gray-200 flex flex-col",
-        // Sidebar Header
-        div { class: "p-4 border-b border-gray-200",
-            h2 { class: "text-lg font-semibold", "Documents" }
-            button { class: "mt-2 w-full bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm",
-                "New Chapter +"
-            }
-        }
-        // Tree View
-        div { class: "flex-1 overflow-y-auto p-2",
-            TreeView { nodes: documents.clone(), on_select }
-        }
-        // Sidebar Footer
-        div { class: "p-2 border-t border-gray-200 text-sm text-gray-500",
-            "Total: {documents.len()} items"
-        }
-    }
-}
-}
