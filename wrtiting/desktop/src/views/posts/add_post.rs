@@ -1,7 +1,7 @@
 use dioxus::{logger::tracing, prelude::*};
-use server::post_functions::create_post;
-use crate::ui::input::{Input, InputType};
-use crate::ui::button::{Button, ButtonScheme};
+use api::posts::create_post;
+use ui::{Input, InputType};
+use ui::{Button, ButtonScheme};
 
 #[component]
 pub fn AddPost(

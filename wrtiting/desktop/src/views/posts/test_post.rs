@@ -1,6 +1,6 @@
 use dioxus::{logger::tracing, prelude::*};
-use shared::models::Post;
-use server::post_functions::get_all_posts;
+use api::posts::post_model::Post;
+use api::posts::post_functions::get_all_posts;
 
 
 #[derive(Props, Clone, PartialEq)]

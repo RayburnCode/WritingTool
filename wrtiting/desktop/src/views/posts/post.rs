@@ -1,17 +1,17 @@
 use dioxus::{
     logger::tracing, prelude::*
 };
-use crate::ui::input::{Input, InputType};
-use crate::ui::button::{Button, ButtonScheme};
-use server::post_functions::{delete_post, update_post, get_all_posts};
+use ui::{Input, InputType};
+use ui::{Button, ButtonScheme};
+use api::posts::{delete_post, update_post, get_all_posts};
 
-use shared::models;
+use api::posts::post_model;
 use std::sync::Arc;
 
-static POSTS: GlobalSignal<Vec<models::Post>> = GlobalSignal::new(Vec::new);
+static POSTS: GlobalSignal<Vec<post_model::Post>> = GlobalSignal::new(Vec::new);
 
 #[component]
-pub fn Post(post: models::Post) -> Element {
+pub fn Post(post: post_model::Post) -> Element {
     // Get the refresh function from context
     let refresh_posts = use_context::<Arc<dyn Fn()>>();
     let mut title = use_signal(|| post.title.clone());

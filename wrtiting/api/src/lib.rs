@@ -11,7 +11,7 @@ pub async fn echo(input: String) -> Result<String, ServerFnError> {
 mod ollama;
 pub use ollama::send_prompt_to_ollama;
 
-mod posts;
+pub mod posts;
 pub use posts::{
     create_post, get_all_posts, find_post, update_post, delete_post,
     Post

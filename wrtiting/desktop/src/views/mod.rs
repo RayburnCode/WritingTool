@@ -1,5 +1,7 @@
 pub mod profile;
 pub mod ai;
+pub mod  posts;
+
 mod home;
 pub use home::Home;
 
@@ -30,4 +32,5 @@ pub use help::{HelpMain, HelpFaq, HelpContact};
 
 mod not_found;
 pub use not_found::NotFound;
+
 

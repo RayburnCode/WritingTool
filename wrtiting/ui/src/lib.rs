@@ -17,6 +17,7 @@ pub use landing_page::LandingPage;
 
 // mod.rs
 pub mod button;
+pub mod input;
 pub mod avatar;
 pub mod avatar_drop;
 pub mod table;
@@ -35,3 +36,5 @@ pub use loading_spinner::{
     SpinnerColor,
     SpinnerProps
 };
+
+pub use input::{Input, InputSize, InputType, InputProps, TextInput, PasswordInput, DateInput, NumberInput,SelectInput};
