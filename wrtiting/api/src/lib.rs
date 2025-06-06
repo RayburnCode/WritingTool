@@ -20,5 +20,3 @@ pub use posts::{
 mod db;
 pub use db::{get_db, init_db};
 
-mod post_mosdels;
-pub use post_mosdels::{Post, PostResponse};

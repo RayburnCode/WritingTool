@@ -1,13 +1,11 @@
 // pg_app/server/src/server_functions.rs
 use dioxus::prelude::*;
 use shared::models::Post;
-use crate::db_connection::get_db;  // Only importing what you're using
+use crate::collection_pool::get_db; 
 use tracing::info;
 
 
  
-
-
 
 #[server]
 pub async fn create_post(title: String, body: String) -> Result<i32, ServerFnError> {
@@ -36,9 +34,6 @@ pub async fn create_post(title: String, body: String) -> Result<i32, ServerFnErr
         }
     }
 }
-
-
-
 
 
 

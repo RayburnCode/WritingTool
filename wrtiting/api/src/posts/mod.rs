@@ -1,5 +1,8 @@
 //pg_app/server/src/lib.rs
-pub mod post_functions;  // Contains server logic (e.g., handling requests, etc.)
+mod post_functions;  // Contains server logic (e.g., handling requests, etc.)
+pub use post_functions::{
+    create_post, get_all_posts, find_post, update_post, delete_post,
+};
 
-pub mod db_connection;
-pub use db_connection::{get_db, init_db};
+mod post_model;
+pub use post_model::{Post, update_content};
