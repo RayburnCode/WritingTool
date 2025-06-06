@@ -23,6 +23,10 @@ psql -h localhost -p 5432 -d tester - U tester
 
 ```
 
+```
+DATABASE_URL=postgres://myuser:mypassword@localhost:5435/mydb
+```
+
 #### SQLX database create
 
 ```
