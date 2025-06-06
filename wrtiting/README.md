@@ -4,6 +4,13 @@
 
 ### Tailwind CSS
 
+Installing Tailwind CLI
+
+```
+npm install tailwindcss @tailwindcss/cli
+
+```
+
 ```
 npx @tailwindcss/cli -i ./input.css -o ./desktop/assets/tailwind.css --watch
 ```
