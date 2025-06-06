@@ -80,3 +80,5 @@ dx bundle --platform desktop \
 ```
 
 ```
+
+dx bundle --platform desktop --package-types "msi"

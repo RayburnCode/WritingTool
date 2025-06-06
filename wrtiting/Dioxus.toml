@@ -1,0 +1,36 @@
+[application]
+name = "writing_tool"
+default_platform = "desktop"
+asset_dir = "public"
+
+[web.app]
+title = "My Dioxus Application" 
+
+[bundle]
+identifier = "com.rayburncode"
+publisher = "rayburncode"
+copyright = "Copyright 2025 rayburncode"
+category = "Utility"
+short_description = "A utility application built with Dioxus"
+long_description = "This application provides various utility functions..."
+
+icon = [
+    "icons/icon.icns",
+    "icons/icon.ico"
+]
+
+[bundle.windows]
+digest_algorithm = "sha-256"
+certificate_thumbprint = "YOUR_ACTUAL_THUMBPRINT"
+icon_path = "icons/icon.ico"
+tsp = true
+webview_install_mode = "Skip"
+allow_downgrades = true
+
+# Uncomment if building for macOS
+# [bundle.macos]
+# license = "LICENSE.txt"
+# exception_domain = "mysite.com"
+# signing_identity = "SIGNING IDENTITY KEYCHAIN ENTRY NAME"
+# provider_short_name = "DioxusLabs"
+# entitlements = "entitlements.plist"
