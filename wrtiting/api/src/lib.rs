@@ -10,3 +10,15 @@ pub async fn echo(input: String) -> Result<String, ServerFnError> {
 
 mod ollama;
 pub use ollama::send_prompt_to_ollama;
+
+mod posts;
+pub use posts::{
+    create_post, get_all_posts, find_post, update_post, delete_post,
+    Post, PostResponse,
+};
+
+mod db;
+pub use db::{get_db, init_db};
+
+mod post_mosdels;
+pub use post_mosdels::{Post, PostResponse};
