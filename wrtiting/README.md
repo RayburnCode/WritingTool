@@ -31,6 +31,10 @@ sqlx database create --database-url postgres://tester:tester@localhost:5432/test
 ```
 
 ```
+sqlx migrate add posts
+```
+
+```
 sqlx migrate add profile_table
 ```
 

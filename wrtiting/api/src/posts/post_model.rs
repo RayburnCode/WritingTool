@@ -1,4 +1,3 @@
-// pg_app/shared/src/models/post_models.rs
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationErrors};
@@ -16,7 +15,7 @@ pub struct Post {
     #[serde(with = "chrono::serde::ts_seconds")]
     pub created_at: DateTime<Utc>,
     
- 
+
     #[serde(with = "chrono::serde::ts_seconds")]
     pub updated_at: DateTime<Utc>,
     

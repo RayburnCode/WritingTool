@@ -1,7 +1,7 @@
 // pg_app/server/src/server_functions.rs
 use dioxus::prelude::*;
-use shared::models::Post;
-use crate::collection_pool::get_db; 
+use crate::Post;
+use crate::db::get_db; 
 use tracing::info;
 
 
