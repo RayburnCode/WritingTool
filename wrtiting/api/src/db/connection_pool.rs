@@ -1,7 +1,4 @@
-use sqlx::postgres::PgPoolOptions;
-// or for MySQL: use sqlx::mysql::MySqlPoolOptions;
-use sqlx::{Pool, Postgres}; // or MySql for MySQL
-
+// wrtiting/api/src/db/connection_pool.rs
 
 use sqlx::PgPool;
 use tokio::sync::OnceCell;

@@ -14,9 +14,9 @@ pub use ollama::send_prompt_to_ollama;
 pub mod posts;
 pub use posts::{
     create_post, get_all_posts, find_post, update_post, delete_post,
-    Post
+    Post,
 };
 
-mod db;
+pub mod db;
 pub use db::{get_db, init_db};
 

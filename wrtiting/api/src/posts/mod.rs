@@ -5,4 +5,4 @@ pub use post_functions::{
 };
 
 pub mod post_model;
-pub use post_model::Post;
+pub use post_model::*;

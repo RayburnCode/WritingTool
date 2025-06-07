@@ -1,11 +1,11 @@
 // pg_app/server/src/server_functions.rs
 use dioxus::prelude::*;
 use crate::Post;
-use crate::db::get_db; 
+use crate::ServerFnError;
+use crate::db::connection_pool::get_db; 
 use tracing::info;
 
 
- 
 
 #[server]
 pub async fn create_post(title: String, body: String) -> Result<i32, ServerFnError> {
