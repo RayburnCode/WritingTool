@@ -39,15 +39,14 @@ pub fn AddPost(
             }
         });
     };
-
     rsx! {
-        div { class: "my-1 flex flex-row items-center gap-2",
-            h2 { class: "text-lg font-medium mb-3", "Add New Post" }
-            div { class: "space-y-3",
+        div { class: "max-w-2xl mx-auto p-6 bg-white rounded-lg shadow-md",
+            h2 { class: "text-2xl  font-bold text-gray-800 mb-6", "Add New Blog Post" }
+            div { class: "space-y-6 flex flex-row",
                 Input {
                     name: "title".to_string(),
                     input_type: Some(InputType::Text),
-                    placeholder: Some("Title".to_string()),
+                    placeholder: Some("Enter post title...".to_string()),
                     value: Some(title()),
                     label: Some("Post Title".to_string()),
                     oninput: move |event: FormEvent| title.set(event.value()),
@@ -55,19 +54,22 @@ pub fn AddPost(
                 Input {
                     name: "body".to_string(),
                     input_type: Some(InputType::Text),
-                    placeholder: Some("Body".to_string()),
+                    placeholder: Some("Write your post content here...".to_string()),
                     value: Some(body()),
-                    label: Some("Post Body".to_string()),
+                    label: Some("Post Content".to_string()),
                     oninput: move |event: FormEvent| body.set(event.value()),
                 }
-                div { class: "mt-4",
+                div { class: "flex justify-end mt-6",
                     Button {
                         button_scheme: ButtonScheme::Success,
+                        class: "px-6 py-2",
                         on_click: on_submit,
-                        text: "Add Post".to_string(),
+                        text: "Publish Post".to_string(),
                     }
                 }
             }
         }
     }
+
+   
 }

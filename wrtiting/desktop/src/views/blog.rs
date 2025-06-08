@@ -1,4 +1,4 @@
-use crate::{views::posts::{PostsRefresh,DisplayPosts, AddPost}, Route};
+use crate::{views::posts::{DisplayAllPosts, AddPost}, Route};
 use dioxus::prelude::*;
 
 #[component]
@@ -27,8 +27,17 @@ pub fn Blog(id: i32) -> Element {
                     to: Route::Blog { id: id + 1 },
                     "Next"
                 }
-                PostsRefresh {}
             }
         }
+
+        h2 { class: "text-xl font-bold text-gray-800 my-4 p-2 bg-gray-100 rounded",
+            "Use this area below for adding additional Posts!"
+        }
+        AddPost {
+            on_post_added: move |post_id| {
+                tracing::info!("Post added with ID: {}", post_id);
+            },
+        }
+        DisplayAllPosts {}
     }
 }
