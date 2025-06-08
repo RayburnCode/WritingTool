@@ -1,4 +1,4 @@
-use crate::Route;
+use crate::{views::posts::{PostsRefresh,DisplayPosts, AddPost}, Route};
 use dioxus::prelude::*;
 
 #[component]
@@ -27,6 +27,7 @@ pub fn Blog(id: i32) -> Element {
                     to: Route::Blog { id: id + 1 },
                     "Next"
                 }
+                PostsRefresh {}
             }
         }
     }

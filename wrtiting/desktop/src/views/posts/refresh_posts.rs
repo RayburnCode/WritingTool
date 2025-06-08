@@ -4,13 +4,13 @@ use api::posts::post_functions::get_all_posts;
 
 
 #[derive(Props, Clone, PartialEq)]
-pub struct PostsContainerProps {
+pub struct PostsRefreshProps {
     #[props(default)]
     pub refresh_count: Signal<u32>,
 }
 
 #[component]
-pub fn PostsContainer(props: PostsContainerProps) -> Element {
+pub fn PostsRefresh(props: PostsRefreshProps) -> Element {
     let mut posts = use_signal(|| Vec::<Post>::new());
     
     // Track the current refresh count

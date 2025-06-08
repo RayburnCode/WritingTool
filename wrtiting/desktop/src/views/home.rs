@@ -1,8 +1,7 @@
-use std::ops::Add;
 
 use dioxus::prelude::*;
 use ui::Hero;
-use crate::views::posts::{Posts, PostsContainer,AddPost};
+use crate::views::posts::{DisplayPosts,AddPost};
 
 #[component]
 pub fn Home() -> Element {
@@ -18,7 +17,6 @@ pub fn Home() -> Element {
                 tracing::info!("Post added with ID: {}", post_id);
             },
         }
-        Posts {}
-        PostsContainer {}
+        DisplayPosts {}
     }
 }

@@ -11,7 +11,7 @@ use std::sync::Arc;
 static POSTS: GlobalSignal<Vec<post_model::Post>> = GlobalSignal::new(Vec::new);
 
 #[component]
-pub fn Post(post: post_model::Post) -> Element {
+pub fn UpdatePost(post: post_model::Post) -> Element {
     // Get the refresh function from context
     let refresh_posts = use_context::<Arc<dyn Fn()>>();
     let mut title = use_signal(|| post.title.clone());
@@ -76,7 +76,7 @@ pub fn Post(post: post_model::Post) -> Element {
 }
 
 #[component]
-pub fn Posts() -> Element {
+pub fn DisplayPosts() -> Element {
     // Create a signal to trigger refreshes
     let refresh_counter = Arc::new(std::sync::Mutex::new(0));
     
@@ -111,7 +111,7 @@ pub fn Posts() -> Element {
             let posts_data = POSTS();
             let posts = posts_data.iter().map(|post| {
                 rsx! {
-                    Post { key: "{post.id}", post: post.clone() }
+                    UpdatePost { key: "{post.id}", post: post.clone() }
                 }
             });
             rsx! {
