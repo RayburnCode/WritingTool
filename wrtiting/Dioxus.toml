@@ -1,36 +1,49 @@
 [application]
-name = "writing_tool"
+
+# App (Project) Name
+name = "Writing Tool"
+
+
+
+# Dioxus App Default Platform
+# desktop, web
 default_platform = "desktop"
-asset_dir = "public"
+
+# `build` & `serve` dist path
+out_dir = "dist"
+
+# assets file folder
+asset_dir = "assets"
 
 [web.app]
-title = "My Dioxus Application" 
+
+# HTML title tag content
+title = "Writing Tool"
+
+[web.watcher]
+
+# when watcher trigger, regenerate the `index.html`
+reload_html = true
+
+# which files or dirs will be watcher monitoring
+watch_path = ["src", "assets"]
+
+# include `assets` in web platform
+[web.resource]
+
+# CSS style file
+
+style = []
+
+# Javascript code file
+script = []
+
+[web.resource.dev]
+
+# Javascript code file
+# serve: [dev-server] only
+script = []
 
 [bundle]
 identifier = "com.rayburncode"
 publisher = "rayburncode"
-copyright = "Copyright 2025 rayburncode"
-category = "Utility"
-short_description = "A utility application built with Dioxus"
-long_description = "This application provides various utility functions..."
-
-icon = [
-    "icons/icon.icns",
-    "icons/icon.ico"
-]
-
-[bundle.windows]
-digest_algorithm = "sha-256"
-certificate_thumbprint = "YOUR_ACTUAL_THUMBPRINT"
-icon_path = "icons/icon.ico"
-tsp = true
-webview_install_mode = "Skip"
-allow_downgrades = true
-
-# Uncomment if building for macOS
-# [bundle.macos]
-# license = "LICENSE.txt"
-# exception_domain = "mysite.com"
-# signing_identity = "SIGNING IDENTITY KEYCHAIN ENTRY NAME"
-# provider_short_name = "DioxusLabs"
-# entitlements = "entitlements.plist"
