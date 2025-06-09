@@ -1,5 +1,5 @@
 mod chat;
-pub use chat::Chat;
+pub use chat::AIChat;
 
 mod model_selection;    
 pub use model_selection::ModelSelection;

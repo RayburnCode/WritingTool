@@ -2,6 +2,10 @@ use dioxus::prelude::*;
 
 use views::{AppLayout, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, NotFound};
 use views::profile::{AccountSettings, Profile};
+use views::legal::{PrivacyPolicy, TermsOfService};
+use views::admin::{AdminDashboard, AdminUsers, AdminReports, AdminSettings};
+use views::ai::AIChat;
+
 use ui::auth::{Login, Register, ResetPassword};
 mod views;
 mod state;
@@ -56,27 +60,34 @@ pub enum Route {
         #[end_nest]
 
         #[nest("/admin")]
-   #[route("/")]
-   AdminDashboard {},
+             #[route("/")]
+             AdminDashboard {},
    
-   #[route("/users")]
-   AdminUsers {},
+            #[route("/users")]
+            AdminUsers {},
    
-   #[route("/reported-content")]
-   AdminReports {},
-#[end_nest]
+            #[route("/reported-content")]
+            AdminReports {},
 
-#[nest("/legal")]
-   #[route("/privacy")]
-   PrivacyPolicy {},
+            #[route("/settings")]
+            AdminSettings {},
+        #[end_nest]
+
+        #[nest("/legal")]
+            #[route("/privacy")]
+             PrivacyPolicy {},
    
-   #[route("/terms")]
-   TermsOfService {},
-#[end_nest]
+            #[route("/terms")]
+            TermsOfService {},
+        #[end_nest]
+
+        #[nest("/ai")]
+            #[route("/")]
+             AIChat {},
+        #[end_nest]
         
     #[end_layout]
 
-    
     #[route("/404")]
     NotFound { route: Vec<String> },
 }

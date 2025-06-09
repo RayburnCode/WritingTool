@@ -16,7 +16,7 @@ pub struct ChatState {
 }
 
 #[component]
-pub fn Chat() -> Element {
+pub fn AIChat() -> Element {
     let mut state = use_signal(ChatState::default);
     let textarea_ref = use_signal::<Option<Element>>(|| None);
 
