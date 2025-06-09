@@ -18,20 +18,18 @@ pub struct ChatState {
 #[component]
 pub fn Chat() -> Element {
     let mut state = use_signal(ChatState::default);
-    let textarea_ref = use_signal::<Option<NodeRef>>(|| None);
+    let textarea_ref = use_signal::<Option<Element>>(|| None);
 
     // Handle prompt input
-    let set_prompt = move |value: String| {
+    let mut set_prompt = move |value: String| {
         state.with_mut(|s| s.current_prompt = value);
     };
 
     // Send prompt to AI
     let send_prompt = {
         let state = state.clone();
-        let textarea_ref = textarea_ref.clone();
         move || {
-            let state = state.clone();
-            let textarea_ref = textarea_ref.clone();
+            let mut state = state.clone();
             spawn(async move {
                 let prompt = state.with(|s| s.current_prompt.clone());
                 if prompt.trim().is_empty() {
@@ -45,11 +43,6 @@ pub fn Chat() -> Element {
                     s.is_loading = true;
                 });
 
-                // Auto-scroll to bottom
-                if let Some(textarea) = textarea_ref() {
-                    _ = textarea.set_scroll_top(textarea.scroll_height());
-                }
-
                 // Simulate AI response (replace with actual API call)
                 tokio::time::sleep(std::time::Duration::from_secs(1)).await;
                 
@@ -61,13 +54,14 @@ pub fn Chat() -> Element {
         }
     };
 
-    // Handle Enter key press
-    let handle_keydown = move |e: KeyboardEvent| {
-        if e.key() == Key::Enter && !e.data.modifiers().shift() {
-            e.prevent_default();
-            send_prompt();
-        }
-    };
+// Handle Enter key press
+let handle_keydown = move |e: KeyboardEvent| {
+    if e.key() == Key::Enter && !e.modifiers().shift() {
+        e.prevent_default();
+        send_prompt();
+    }
+};
+
 
     rsx! {
         div { class: "flex flex-col h-screen max-w-3xl mx-auto p-4 bg-gray-50",
@@ -76,7 +70,6 @@ pub fn Chat() -> Element {
             div {
                 class: "flex-1 overflow-y-auto mb-4 space-y-4",
                 id: "chat-history",
-                r#ref: textarea_ref,
                 {
                     state
                         .read()
@@ -122,48 +115,29 @@ pub fn Chat() -> Element {
                 }
             }
             // Input area
-            button {
-                class: "self-end bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg disabled:opacity-50",
-                onclick: move |_| send_prompt(),
-                disabled: state.read().current_prompt.trim().is_empty() || state.read().is_loading,
-                if state.read().is_loading {
-                    "Sending..."
-                } else {
-                    "Send"
+            div { class: "flex flex-col gap-2",
+                textarea {
+                    class: "w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent",
+                    rows: "3",
+                    value: "{state.read().current_prompt}",
+                    oninput: move |e| set_prompt(e.value()),
+                    onkeydown: handle_keydown,
+                    placeholder: "Type your message here...",
+                    disabled: state.read().is_loading,
+                }
+                button {
+                    class: "self-end bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg disabled:opacity-50",
+                    onclick: move |_| send_prompt(),
+                    disabled: state.read().current_prompt.trim().is_empty() || state.read().is_loading,
+                    if state.read().is_loading {
+                        "Sending..."
+                    } else {
+                        "Send"
+                    }
                 }
             }
         }
     }
+
 }
 
-// Example Ollama API implementation (uncomment to use)
-/*
-async fn send_to_ollama(prompt: &str) -> Result<String, reqwest::Error> {
-    #[derive(Serialize)]
-    struct OllamaRequest {
-        model: String,
-        prompt: String,
-        stream: bool,
-    }
-
-    #[derive(Deserialize)]
-    struct OllamaResponse {
-        response: String,
-    }
-
-    let client = reqwest::Client::new();
-    let response = client
-        .post("http://localhost:11434/api/generate")
-        .json(&OllamaRequest {
-            model: "llama3".to_string(),
-            prompt: prompt.to_string(),
-            stream: false,
-        })
-        .send()
-        .await?
-        .json::<OllamaResponse>()
-        .await?;
-
-    Ok(response.response)
-}
-*/
