@@ -54,6 +54,25 @@ pub enum Route {
             #[route("/contact")]
             HelpContact {},
         #[end_nest]
+
+        #[nest("/admin")]
+   #[route("/")]
+   AdminDashboard {},
+   
+   #[route("/users")]
+   AdminUsers {},
+   
+   #[route("/reported-content")]
+   AdminReports {},
+#[end_nest]
+
+#[nest("/legal")]
+   #[route("/privacy")]
+   PrivacyPolicy {},
+   
+   #[route("/terms")]
+   TermsOfService {},
+#[end_nest]
         
     #[end_layout]
 

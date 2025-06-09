@@ -1,6 +1,8 @@
 pub mod profile;
 pub mod ai;
-pub mod  posts;
+pub mod posts;
+pub mod admin;
+pub mod expense;
 
 mod home;
 pub use home::Home;
