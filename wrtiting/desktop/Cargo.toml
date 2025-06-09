@@ -8,6 +8,8 @@ chrono = "0.4.41"
 serde = "1.0.219"
 tokio = "1.45.1"
 tracing = "0.1.41"
+dotenvy = "0.15.7"
+
 dioxus = { workspace = true, features = ["router"] }
 ui = { workspace = true }
 api = { workspace = true }

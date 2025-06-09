@@ -20,7 +20,7 @@ pub fn AvatarDrop(props: AvatarDropProps) -> Element {
     let mut show_dropdown = use_signal(|| false);
 
     // Clone menu_items into a local variable to extend its lifetime
-    let menu_items = props.menu_items.clone();
+    //let menu_items = props.menu_items.clone();
     
     // Close when clicking anywhere (including outside)
     use_dropdown_auto_close(show_dropdown);

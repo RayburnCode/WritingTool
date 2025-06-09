@@ -8,6 +8,8 @@
 	<string>Desktop</string>
 	<key>CFBundleExecutable</key>
 	<string>desktop</string>
+	<key>CFBundleIconFile</key>
+	<string>icon.icns</string>
 	<key>CFBundleIdentifier</key>
 	<string>com.rayburncode</string>
 	<key>CFBundleInfoDictionaryVersion</key>
@@ -19,12 +21,16 @@
 	<key>CFBundleShortVersionString</key>
 	<string>0.1.0</string>
 	<key>CFBundleVersion</key>
-	<string>20250609.045531</string>
+	<string>20250609.050524</string>
 	<key>CSResourcesFileMapped</key>
 	<true/>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.utilities</string>
 	<key>LSRequiresCarbon</key>
 	<true/>
 	<key>NSHighResolutionCapable</key>
 	<true/>
+	<key>NSHumanReadableCopyright</key>
+	<string>Copyright 2025 rayburncode</string>
 </dict>
 </plist>

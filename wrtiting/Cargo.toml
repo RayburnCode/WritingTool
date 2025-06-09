@@ -27,3 +27,7 @@ inherits = "dev"
 
 [profile.android-dev]
 inherits = "dev"
+
+[profile.release]
+lto = true
+opt-level = 3

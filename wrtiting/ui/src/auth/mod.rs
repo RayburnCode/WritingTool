@@ -1,4 +1,3 @@
-use dioxus::prelude::*;
 
 pub mod login;
 pub mod register;

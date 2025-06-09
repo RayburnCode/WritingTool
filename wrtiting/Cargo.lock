@@ -955,6 +955,7 @@ dependencies = [
  "api",
  "chrono",
  "dioxus",
+ "dotenvy",
  "serde",
  "tokio",
  "tracing",

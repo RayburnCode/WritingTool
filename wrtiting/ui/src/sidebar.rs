@@ -1,5 +1,5 @@
 use dioxus::prelude::*;
-use dioxus_desktop::{use_window, use_muda_event_handler, WindowEvent};
+use dioxus_desktop::use_window;
 
 
 #[derive(Clone, Debug, PartialEq)]

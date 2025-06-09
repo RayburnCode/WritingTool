@@ -47,3 +47,13 @@ script = []
 [bundle]
 identifier = "com.rayburncode"
 publisher = "rayburncode"
+copyright = "Copyright 2025 rayburncode"
+category = "Utility"
+short_description = "A utility application built with Dioxus"
+long_description = "This application provides various utility functions..."
+
+icon = [
+    "icons/icon.icns",
+    "icons/icon.ico"
+]
+
