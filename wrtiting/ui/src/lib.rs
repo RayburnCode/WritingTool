@@ -7,8 +7,8 @@ pub use hero::Hero;
 mod echo;
 pub use echo::Echo;
 
-pub mod sidebar;
-pub use sidebar::{DocumentNode, NodeType, TreeNode, TreeView, Sidebar};
+pub mod editor_sidebar;
+pub use editor_sidebar::{DocumentNode, NodeType, TreeNode, TreeView, Sidebar};
 
 pub mod landing_page;
 pub use landing_page::LandingPage;
@@ -22,7 +22,8 @@ pub mod avatar_drop;
 pub mod navbar_drop;
 pub mod table;
 pub mod loading_spinner;
-
+pub mod search;
+pub mod sidebar;
 
 // Re-export from modules
 pub use button::{Button, ButtonSize, ButtonScheme, ButtonType};
@@ -42,3 +43,5 @@ pub use input::{Input, InputSize, InputType, InputProps, TextInput, PasswordInpu
 pub use navbar_drop::{NavDrop, 
     NavMenuItem, 
 };
+pub use search::Search;
+pub use sidebar::{TraditionalSidebar, SidebarItem,};

@@ -1,5 +1,8 @@
 use dioxus::prelude::*;
 use serde::{Deserialize, Serialize};
+use ui::{DocumentNode, NodeType, Sidebar};
+
+use crate::views::ai::AISidebar;
 
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub enum Message {
@@ -64,6 +67,7 @@ let handle_keydown = move |e: KeyboardEvent| {
 
 
     rsx! {
+        AISidebar {}
         div { class: "flex flex-col h-screen max-w-3xl mx-auto p-4 bg-gray-50",
             h2 { class: "text-2xl font-bold mb-4 text-gray-800", "Chat with AI" }
             // Message history

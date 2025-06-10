@@ -25,3 +25,10 @@
   --color-accent: oklch(0.96 0.0175 73.08);
   --color-muted: oklch(0.99 0.0062 75.41);
 }
+
+/* Custom transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+  transition-duration: 150ms;
+}

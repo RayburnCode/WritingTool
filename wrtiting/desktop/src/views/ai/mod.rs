@@ -6,3 +6,6 @@ pub use model_selection::ModelSelection;
 
 mod workflows;
 pub use workflows::Workflows;
+
+mod sidebar_ai;
+pub use sidebar_ai::AISidebar;

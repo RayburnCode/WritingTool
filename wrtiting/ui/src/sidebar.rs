@@ -1,93 +1,155 @@
 use dioxus::prelude::*;
-use dioxus_desktop::use_window;
-
 
 #[derive(Clone, Debug, PartialEq)]
-pub struct DocumentNode {
+pub struct SidebarItem {
     pub id: String,
     pub title: String,
-    pub children: Vec<DocumentNode>,
+    pub icon: String,
+    pub children: Vec<SidebarItem>,
     pub is_expanded: bool,
-    pub node_type: NodeType, // Add this for icons
-}
-
-#[derive(Clone, Debug, PartialEq)]
-pub enum NodeType {
-    Chapter,
-    Scene,
-    Note,
 }
 
 #[component]
-pub fn TreeView( nodes: Vec<DocumentNode>, on_select: EventHandler<String>) -> Element {
+pub fn TraditionalSidebar(
+    items: Vec<SidebarItem>,
+    selected_item: String,
+    on_select: EventHandler<String>,
+) -> Element {
+    let mut is_collapsed = use_signal(|| false);
+    let mut sidebar_width = use_signal(|| 16); // Default width in rem
+    
     rsx! {
-        ul { class: "space-y-1",
-            {nodes.iter().map(|node| rsx! {
-                TreeNode {
-                    key: "{node.id}",
-                    node: node.clone(),
-                    on_select,
-                    level: 0,
+        div {
+            class: "flex flex-col h-full bg-gray-50 border-r border-gray-200 transition-all duration-200 ease-in-out",
+            style: format!(
+                "width: {}rem; min-width: {}rem;",
+                if *is_collapsed.read() { 4 } else { *sidebar_width.read() },
+                if *is_collapsed.read() { 4 } else { 16 },
+            ),
+            // Sidebar header
+            div { class: "flex items-center justify-between p-4 border-b border-gray-200",
+                // Logo/Title (hidden when collapsed)
+                if !*is_collapsed.read() {
+                    h1 { class: "text-xl font-semibold text-gray-800", "My App" }
+                } else {
+                    div { class: "w-6 h-6" } // Spacer
                 }
-            })}
+                // Collapse button
+                button {
+                    class: "p-1 rounded-md hover:bg-gray-200",
+                    onclick: move |_| is_collapsed.toggle(),
+                    if *is_collapsed.read() {
+                        "→"
+                        if *is_collapsed.read() {
+                            "→"
+                        } else {
+                            "←"
+                        }
+                    }
+                }
+                // Navigation items
+                nav { class: "flex-1 overflow-y-auto py-2",
+                    ul { class: "space-y-1",
+                        {items.iter().map(|item| rsx! {
+                            SidebarNavItem {
+                                key: "{item.id}",
+                                item: item.clone(),
+                                selected_item: selected_item.clone(),
+                                on_select,
+                                level: 0,
+                                is_collapsed: *is_collapsed.read(),
+                            }
+                        })}
+                    }
+                }
+                // User section (bottom of sidebar)
+                div { class: "p-4 border-t border-gray-200",
+                    if !*is_collapsed.read() {
+                        div { class: "flex items-center gap-3",
+                            div { class: "w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center",
+                                "👤"
+                            }
+                            div { class: "flex-1",
+                                p { class: "font-medium", "John Doe" }
+                                p { class: "text-xs text-gray-500", "Admin" }
+                            }
+                        }
+                    } else {
+                        div { class: "w-8 h-8 rounded-full bg-gray-300 flex items-center justify-center mx-auto",
+                            "👤"
+                        }
+                    }
+                }
+            }
         }
-    }
-}
+    }}
+
 
 #[component]
-pub fn TreeNode(
-    node: DocumentNode,
+pub fn SidebarNavItem(
+    item: SidebarItem,
+    selected_item: String,
     on_select: EventHandler<String>,
     level: usize,
+    is_collapsed: bool,
 ) -> Element {
-    let mut is_expanded = use_signal(|| node.is_expanded);
+    let mut is_expanded = use_signal(|| item.is_expanded);
+    let has_children = !item.children.is_empty();
     
-    let icon = match node.node_type {
-        NodeType::Chapter => "📖",
-        NodeType::Scene => "🎬",
-        NodeType::Note => "📝",
+    let is_active = selected_item == item.id;
+    
+    let padding_left = if is_collapsed {
+        "pl-2".to_string()
+    } else {
+        format!("pl-{}", level * 4 + 2)
     };
-
-    let padding_left = format!("pl-{}", level * 4 + 2);
-
+    
     rsx! {
         li { class: "select-none",
             div {
-                class: "flex items-center hover:bg-gray-100 rounded-md py-1 pr-2 {padding_left}",
+                class: format!(
+                    "flex items-center {} pr-2 py-2 rounded-r-lg mx-2 hover:bg-gray-200 transition-colors duration-150 {}",
+                    padding_left,
+                    if is_active { "bg-blue-100 text-blue-600" } else { "text-gray-700" },
+                ),
                 onclick: move |_| {
-                    let expanded = *is_expanded.read();
-                    is_expanded.set(!expanded);
-                    on_select.call(node.id.clone());
-                },
-                // Expand/collapse icon
-                if !node.children.is_empty() {
-                    span { class: "mr-1 text-gray-500",
-                        {if *is_expanded.read() { "▾" } else { "▸" }}
+                    if has_children {
+                        is_expanded.toggle();
                     }
-                } else {
-                    span { class: "w-4" }
+                    on_select.call(item.id.clone());
+                },
+
+                // Icon
+                span { class: "flex-shrink-0 mr-3 text-lg",
+                    if is_collapsed && has_children && !*is_expanded.read() {
+                        "⊕"
+                    } else {
+                        "{item.icon}"
+                    }
                 }
-                // Node icon and title
-                span { class: "mr-2", "{icon}" }
-                span { class: "flex-1 truncate", "{node.title}" }
-                // Add button
-                button {
-                    class: "ml-auto p-1 text-gray-400 hover:text-gray-600 hover:bg-gray-200 rounded",
-                    onclick: move |e| {
-                        e.stop_propagation();
-                    },
-                    "+"
-                }
-            }
-            // Children - removed the duplicate if statement
-            if *is_expanded.read() && !node.children.is_empty() {
-                ul { class: "space-y-1",
-                    {node.children.iter().map(|child| rsx! {
-                        TreeNode {
+
+                // Title (hidden when collapsed)
+                if !is_collapsed {
+                    span { class: "flex-1 truncate", "{item.title}" }
+
+                    // Expand/collapse icon (if has children)
+                    if has_children {
+                        span { class: "ml-2 text-gray-500",
+                            if *is_expanded.read() {
+                                "▾"
+                            } else {
+                                "▸"
+                            }
+                        }
+                    }
+                    {item.children.iter().map(|child| rsx! {
+                        SidebarNavItem {
                             key: "{child.id}",
-                            node: child.clone(),
+                            item: child.clone(),
+                            selected_item: selected_item.clone(),
                             on_select,
                             level: level + 1,
+                            is_collapsed,
                         }
                     })}
                 }
@@ -95,88 +157,3 @@ pub fn TreeNode(
         }
     }
 }
-
-
-
-
-#[component]
-pub fn Sidebar(
-    documents: Vec<DocumentNode>,
-    on_select: EventHandler<String>,
-) -> Element {
-    let mut is_open = use_signal(|| true);
-    let mut sidebar_width: Signal<i32> = use_signal(|| 14); // Default width in rem
-    let mut is_resizing = use_signal(|| false);
-    let mut start_x = use_signal(|| 0.0);
-    let mut start_width = use_signal(|| 14.0);
-    let window = use_window();
-    let window1 = window.clone();
-    let window2 = window.clone();
-    let window3 = window.clone();
-
-    rsx! {
-        div {
-            class: "flex h-full",
-            style: format!("width: {}rem", if is_open() { sidebar_width() } else { 0 }),
-            // Sidebar Content
-            onmouseup: move |_| {
-                if is_resizing() {
-                    is_resizing.set(false);
-                    let _ = window1.set_cursor_grab(false);
-                    let _ = window1.set_cursor_visible(true);
-                }
-            },
-            onmouseleave: move |_| {
-                if is_resizing() {
-                    is_resizing.set(false);
-                    let _ = window2.set_cursor_grab(false);
-                    let _ = window2.set_cursor_visible(true);
-                }
-            },
-            onmousemove: move |e| {
-                if is_resizing() {
-                    let new_width = (start_width()
-                        + (e.data.element_coordinates().x - start_x()))
-                        .max(150.0)
-                        .min(500.0);
-                    sidebar_width.set(new_width as i32);
-                }
-            },
-            // Collapse/Expand Button
-            button {
-                class: "absolute z-10 top-4 left-0 w-4 h-8 bg-gray-300 hover:bg-gray-400 rounded-r-md shadow transition-all duration-300 ease-in-out",
-                style: format!("left: {}rem; top: 5rem;", if is_open() { sidebar_width() } else { 0 }),
-                onclick: move |_| is_open.toggle(),
-                {if is_open() { "◄" } else { "►" }}
-            }
-
-            // Sidebar Header
-            div { class: "p-4 border-b border-gray-200",
-                h2 { class: "text-lg font-semibold", "Documents" }
-                div { class: "flex gap-2",
-                    button {
-                        class: "text-xs bg-gray-200 hover:bg-gray-300 py-1 px-2 rounded",
-                        onclick: move |_| is_open.toggle(),
-                        {if is_open() { "Hide" } else { "Show" }}
-                    }
-                }
-                // Tree View
-                div { class: "flex-1 overflow-y-auto p-2",
-                    TreeView { nodes: documents.clone(), on_select }
-                }
-            }
-
-            // Sidebar Resizer
-            div {
-                class: "absolute top-0 right-0 h-full w-2 cursor-col-resize z-20",
-                onmousedown: move |e: dioxus::events::MouseEvent| {
-                    is_resizing.set(true);
-                    start_x.set(e.data.element_coordinates().x);
-                    start_width.set(sidebar_width() as f64);
-                    let _ = window3.set_cursor_grab(true);
-                    let _ = window3.set_cursor_visible(false);
-                },
-            }
-        }
-    }
-    }

@@ -7,7 +7,7 @@ use crate::{
 
 use ui::{
     AvatarDrop, 
-    MenuItem, NavDrop, NavMenuItem
+    MenuItem, NavDrop, NavMenuItem, Search
 };
 
 #[component]
@@ -36,7 +36,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
             onclick: None,
         },
                 MenuItem {
-            label: "Toggle Light and dark".to_string(),
+            label: "Toggle Theme - DNW".to_string(),
             to: None,
             onclick: Some(EventHandler::new(toggle_theme)),
         },
@@ -54,6 +54,8 @@ pub fn DesktopNavbar(children: Element) -> Element {
         },
     ];
 
+
+    
 
   let nav_menu_items = vec![
 
@@ -169,17 +171,8 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         ),
                         "Focus Mode"
                     }
-                    button {
-                        onclick: toggle_theme,
-                        class: "hover:text-blue-400 transition text-gray-300",
-                        if dark_mode {
-                            "☀️ Light"
-                        } else {
-                            "🌙 Dark"
-                        }
-                    }
                     NavDrop { nav_menu_items }
-                    p { "add in a search bar component" }
+                    Search {}
                     AvatarDrop {
                         name: "Bonnie Testing",
                         email: "name@test.com",
