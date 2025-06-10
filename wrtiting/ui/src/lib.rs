@@ -1,7 +1,6 @@
 //! This crate contains all shared UI for the workspace.
 
 pub mod auth;
-
 mod hero;
 pub use hero::Hero;
 
@@ -20,6 +19,7 @@ pub mod button;
 pub mod input;
 pub mod avatar;
 pub mod avatar_drop;
+pub mod navbar_drop;
 pub mod table;
 pub mod loading_spinner;
 
@@ -38,3 +38,7 @@ pub use loading_spinner::{
 };
 
 pub use input::{Input, InputSize, InputType, InputProps, TextInput, PasswordInput, DateInput, NumberInput,SelectInput};
+
+pub use navbar_drop::{NavDrop, 
+    NavMenuItem, 
+};

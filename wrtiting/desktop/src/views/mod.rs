@@ -2,7 +2,6 @@ pub mod profile;
 pub mod ai;
 pub mod posts;
 pub mod admin;
-pub mod expense;
 pub mod legal;
 
 mod home;

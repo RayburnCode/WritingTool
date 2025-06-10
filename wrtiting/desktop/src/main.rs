@@ -66,7 +66,7 @@ pub enum Route {
             #[route("/users")]
             AdminUsers {},
    
-            #[route("/reported-content")]
+            #[route("/reports")]
             AdminReports {},
 
             #[route("/settings")]
