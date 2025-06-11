@@ -1,6 +1,13 @@
 use jsonwebtoken::{encode, decode, Header, EncodingKey, DecodingKey, Validation};
 use serde::{Serialize, Deserialize};
 
+use dioxus::prelude::*;
+use crate::Post;
+use crate::ServerFnError;
+use crate::db::connection_pool::get_db; 
+use tracing::info;
+
+
 #[derive(Debug, Serialize, Deserialize)]
 pub struct SessionTokenClaims {
     pub sub: Uuid,       // User ID
@@ -23,7 +30,10 @@ impl SessionService {
             session_duration: chrono::Duration::days(30),
         }
     }
+}
 
+
+#[server]
     pub async fn create_session(
         &self,
         user: &User,
@@ -69,6 +79,7 @@ impl SessionService {
         Ok((session, token))
     }
 
+#[server]
     pub async fn validate_session(
         &self,
         token: &str,
@@ -122,6 +133,7 @@ impl SessionService {
         Ok((session, user))
     }
 
+    #[server]
     pub async fn delete_session(&self, session_id: Uuid) -> Result<(), anyhow::Error> {
         sqlx::query!(
             r#"
@@ -136,6 +148,7 @@ impl SessionService {
         Ok(())
     }
     
+    #[server]
     pub async fn delete_all_user_sessions(&self, user_id: Uuid) -> Result<(), anyhow::Error> {
         sqlx::query!(
             r#"
@@ -149,4 +162,3 @@ impl SessionService {
         
         Ok(())
     }
-}

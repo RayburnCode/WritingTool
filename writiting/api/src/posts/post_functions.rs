@@ -50,19 +50,18 @@ pub async fn get_all_posts() -> Result<Vec<Post>, ServerFnError> {
 
 
 
-
 #[server]
 pub async fn find_post(id: i32) -> Result<Post, ServerFnError> {
     let db = get_db().await;
 
+    // Use fetch_optional instead of fetch_one
     let result = sqlx::query_as::<_, Post>("SELECT * FROM posts WHERE id = $1")
-        .fetch_one(db)
-        .await?;
+        .fetch_optional(db)
+        .await?
+        .ok_or(ServerFnError::new("Post not found"))?;
 
     Ok(result)
 }
-
-
 
 
 
@@ -102,4 +101,15 @@ pub async fn update_post(id: i32, title: String, body: String) -> Result<Post, S
         tracing::error!("Failed to update post: {}", e);
         ServerFnError::ServerError("Failed to update post".into())
     })
+}
+
+
+#[server]
+async fn get_max_post_id() -> Result<i32, ServerFnError> {
+    let db = get_db().await;
+    let count = sqlx::query_scalar("SELECT MAX(id) FROM posts")
+        .fetch_one(db)
+        .await?
+        .unwrap_or(0); // Returns 0 if no posts exist
+    Ok(count)
 }
