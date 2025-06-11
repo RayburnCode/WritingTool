@@ -1,10 +1,11 @@
 use dioxus::prelude::*;
 
-use views::{AppLayout, Blog, Home, Editor, FocusMode, HelpMain, HelpFaq, HelpContact, NotFound};
+use views::{AppLayout, Blog, Home, Editor, FocusMode, NotFound};
 use views::profile::{AccountSettings, Profile};
 use views::legal::{PrivacyPolicy, TermsOfService};
 use views::admin::{AdminDashboard, AdminUsers, AdminReports, AdminSettings};
 use views::ai::AIChat;
+use views::help::{HelpMain};
 
 use ui::auth::{Login, Register, ResetPassword};
 mod views;
@@ -35,6 +36,8 @@ pub enum Route {
 
         #[route("/profile")]
         Profile {},
+        #[route("/help")]
+        HelpMain {},
         
          #[nest("/auth")]
 
@@ -48,16 +51,16 @@ pub enum Route {
             ResetPassword {},
         #[end_nest]
     
-        #[nest("/help")]
-            #[route("/")]
-            HelpMain {},
+        // #[nest("/help")]
+        //     #[route("/")]
+        //     HelpMain {},
             
-            #[route("/faq")]
-            HelpFaq {},
+        //     #[route("/faq")]
+        //     HelpFaq {},
             
-            #[route("/contact")]
-            HelpContact {},
-        #[end_nest]
+        //     #[route("/contact")]
+        //     HelpContact {},
+        // #[end_nest]
 
         #[nest("/admin")]
              #[route("/")]

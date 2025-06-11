@@ -2,7 +2,6 @@ use dioxus::{
     logger::tracing, prelude::*
 };
 use api::posts::find_post;
-use api::posts::post_model;
 use std::sync::Arc;
 use crate::views::posts::UpdatePost;
 

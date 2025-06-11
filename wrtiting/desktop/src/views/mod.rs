@@ -3,6 +3,7 @@ pub mod ai;
 pub mod posts;
 pub mod admin;
 pub mod legal;
+pub mod help;
 
 mod home;
 pub use home::Home;
@@ -28,8 +29,7 @@ pub use focus_mode::FocusMode;
 
 
 
-mod help;
-pub use help::{HelpMain, HelpFaq, HelpContact};
+
 
 
 mod not_found;

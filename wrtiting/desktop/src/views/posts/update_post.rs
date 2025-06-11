@@ -3,7 +3,7 @@ use dioxus::{
 };
 use ui::{Input, InputType};
 use ui::{Button, ButtonScheme};
-use api::posts::{delete_post, update_post, get_all_posts};
+use api::posts::{delete_post, update_post};
 
 use api::posts::post_model;
 use std::sync::Arc;

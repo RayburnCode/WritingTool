@@ -4,12 +4,25 @@ use dioxus::prelude::*;
 #[component]
 pub fn Blog(id: i32) -> Element {
     // Track the current post ID in state
-    let mut current_id = use_signal(|| id.max(0)); // Ensure ID is never negative
-    let mut max_post_id = use_signal(|| 0); // Track the highest post ID available
+    let mut current_id = use_signal(|| id.max(1)); // Ensure ID is at least 1
+    let mut max_post_id = use_signal(|| 0);
+    
+    // We'll use a resource to fetch the maximum post ID
+    let posts_count = use_resource(move || async move {
+ 
+        10 // Example: pretend there are 10 posts
+    });
 
     // Update current_id when the prop changes (from URL navigation)
     use_effect(move || {
-        current_id.set(id.max(0));
+        current_id.set(id.max(1)); // Don't allow IDs less than 1
+    });
+
+    // When posts count loads, update max_post_id
+    use_effect(move || {
+        if let Some(count) = posts_count.read().as_ref() {
+            max_post_id.set(*count);
+        }
     });
 
     rsx! {
@@ -21,7 +34,7 @@ pub fn Blog(id: i32) -> Element {
                 // Navigation controls
                 div { class: "flex items-center justify-between mt-6",
                     // Previous button - disabled if at first post
-                    if current_id() <= 0 {
+                    if current_id() <= 1 {
                         span { class: "px-4 py-2 rounded transition-colors bg-gray-300 cursor-not-allowed",
                             "Previous"
                         }
@@ -38,13 +51,19 @@ pub fn Blog(id: i32) -> Element {
                     // Current post indicator
                     div { class: "text-gray-600", "Post {current_id} of {max_post_id}" }
 
-                    // Next button
-                    Link {
-                        class: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors",
-                        to: Route::Blog {
-                            id: current_id() + 1,
-                        },
-                        "Next"
+                    // Next button - disabled if at last post
+                    if current_id() >= max_post_id() {
+                        span { class: "px-4 py-2 rounded transition-colors bg-gray-300 cursor-not-allowed",
+                            "Next"
+                        }
+                    } else {
+                        Link {
+                            class: "px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 transition-colors",
+                            to: Route::Blog {
+                                id: current_id() + 1,
+                            },
+                            "Next"
+                        }
                     }
                 }
             }
@@ -58,9 +77,8 @@ pub fn Blog(id: i32) -> Element {
                 AddPost {
                     on_post_added: move |post_id| {
                         tracing::info!("Post added with ID: {}", post_id);
-                        if post_id > max_post_id() {
-                            max_post_id.set(post_id);
-                        }
+                        max_post_id.set(post_id);
+                        current_id.set(post_id);
                     },
                 }
             }
