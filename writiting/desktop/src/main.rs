@@ -22,8 +22,8 @@ pub enum Route {
         #[route("/")]
         Home {},
         
-        #[route("/blog/:id")]
-        Blog { id: i32 },
+        #[route("/blog/:initial_id")]
+        Blog { initial_id: i32 },
         
         #[route("/editor")]
         Editor {},

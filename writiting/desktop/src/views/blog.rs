@@ -1,11 +1,11 @@
-use crate::views::posts::{AddPost, DisplayPostsById};
+use crate::views::posts::{AddPost, DisplayPostById};
 use dioxus::prelude::*;
 use api::posts::get_post_count;
 
 #[component]
-pub fn Blog(id: i32) -> Element {
+pub fn Blog(initial_id: i32) -> Element {
     // Track the current post ID and max ID
-    let mut current_id = use_signal(|| id.max(1));
+    let mut current_id = use_signal(|| initial_id.max(1));
     let mut max_post_id = use_signal(|| None);
     
     // Fetch the actual max post ID from the server
@@ -17,11 +17,11 @@ pub fn Blog(id: i32) -> Element {
                 None
             }
         }
-    }); 
+    });
 
     // Update current_id when the prop changes
     use_effect(move || {
-        current_id.set(id.max(1));
+        current_id.set(initial_id.max(1));
     });
 
     // Update max_post_id when posts_count changes
@@ -57,13 +57,7 @@ pub fn Blog(id: i32) -> Element {
                 div { class: "flex items-center justify-between mt-6",
                     // Previous button
                     button {
-                        class: {
-                            if current_id() <= 1 {
-                                "px-4 py-2 rounded transition-colors bg-gray-300 cursor-not-allowed"
-                            } else {
-                                "px-4 py-2 rounded transition-colors bg-blue-500 hover:bg-blue-600 text-white"
-                            }
-                        },
+                        class: if current_id() <= 1 { "px-4 py-2 rounded transition-colors bg-gray-300 cursor-not-allowed" } else { "px-4 py-2 rounded transition-colors bg-blue-500 hover:bg-blue-600 text-white" },
                         disabled: current_id() <= 1,
                         onclick: navigate_prev,
                         "Previous"
@@ -91,52 +85,47 @@ pub fn Blog(id: i32) -> Element {
                             }
                         }
                     }
+
+                    // Next button
                     button {
-                        class: {
-                            if max_post_id().is_none() || current_id() >= max_post_id().unwrap_or(0) {
-                                "px-4 py-2 rounded transition-colors bg-gray-300 cursor-not-allowed"
-                            } else {
-                                "px-4 py-2 rounded transition-colors bg-blue-500 hover:bg-blue-600 text-white"
-                            }
-                        },
+                        class: if max_post_id().is_none() || current_id() >= max_post_id().unwrap_or(0) { "px-4 py-2 rounded transition-colors bg-gray-300 cursor-not-allowed" } else { "px-4 py-2 rounded transition-colors bg-blue-500 hover:bg-blue-600 text-white" },
                         disabled: max_post_id().is_none() || current_id() >= max_post_id().unwrap_or(0),
                         onclick: navigate_next,
                         "Next"
                     }
-                    "Next"
                 }
             }
-        }
 
-        // Post display section
-        div {
-            {
-                match max_post_id() {
-                    Some(max) if current_id() <= max => rsx! {
-                        DisplayPostsById { id: current_id() }
-                    },
-                    Some(_) => rsx! {
-                        div { class: "text-center py-8 text-red-500", "Post not found" }
-                    },
-                    None => rsx! {
-                        div { class: "text-center py-8 animate-pulse", "Loading post..." }
-                    },
-                }
-            }
-        }
-
-        // Add new post section
-        div { class: "bg-white rounded-lg shadow-md p-6 my-6",
-            h2 { class: "text-xl font-bold text-gray-800 mb-4", "Create a New Post" }
-            AddPost {
-                on_post_added: move |post_id| {
-                    tracing::info!("Post added with ID: {}", post_id);
-                    if max_post_id().map_or(true, |max| post_id > max) {
-                        max_post_id.set(Some(post_id));
+            // Post display section
+            div { class: "bg-white rounded-lg shadow-md p-6 mb-6",
+                {
+                    match max_post_id() {
+                        Some(max) if current_id() <= max => rsx! {
+                            DisplayPostById { id: current_id() }
+                        },
+                        Some(_) => rsx! {
+                            div { class: "text-center py-8 text-red-500", "Post not found" }
+                        },
+                        None => rsx! {
+                            div { class: "text-center py-8 animate-pulse", "Loading post..." }
+                        },
                     }
-                    current_id.set(post_id);
-                },
+                }
+            }
+
+            // Add new post section
+            div { class: "bg-white rounded-lg shadow-md p-6",
+                h2 { class: "text-xl font-bold text-gray-800 mb-4", "Create a New Post" }
+                AddPost {
+                    on_post_added: move |new_post_id| {
+                        tracing::info!("Post added with ID: {}", new_post_id);
+                        if max_post_id().map_or(true, |max| new_post_id > max) {
+                            max_post_id.set(Some(new_post_id));
+                        }
+                        current_id.set(new_post_id);
+                    },
+                }
             }
         }
     }
-    }
+}

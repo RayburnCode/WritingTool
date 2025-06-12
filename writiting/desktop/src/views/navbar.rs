@@ -135,7 +135,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
                         "Home"
                     }
                     Link {
-                        to: Route::Blog { id: 1 },
+                        to: Route::Blog { initial_id: 1 },
                         class: format!(
                             "hover:text-blue-400 transition {}",
                             if matches!(current_route, Route::Blog { .. }) {

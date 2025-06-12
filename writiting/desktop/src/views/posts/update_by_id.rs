@@ -3,7 +3,7 @@ use api::posts::find_post;
 use crate::views::posts::UpdatePost;
 
 #[component]
-pub fn DisplayPostsById(id: i32) -> Element {
+pub fn UpdatePostsById(id: i32) -> Element {
     // Simplified refresh mechanism
     let mut refresh_count = use_signal(|| 0);
     let post = use_resource(move || async move {
