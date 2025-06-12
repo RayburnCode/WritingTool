@@ -98,18 +98,16 @@ pub fn Blog(initial_id: i32) -> Element {
 
             // Post display section
             div { class: "bg-white rounded-lg shadow-md p-6 mb-6",
-                {
-                    match max_post_id() {
-                        Some(max) if current_id() <= max => rsx! {
-                            DisplayPostById { id: current_id() }
-                        },
-                        Some(_) => rsx! {
-                            div { class: "text-center py-8 text-red-500", "Post not found" }
-                        },
-                        None => rsx! {
-                            div { class: "text-center py-8 animate-pulse", "Loading post..." }
-                        },
-                    }
+                match max_post_id() {
+                    Some(max) if current_id() <= max => rsx! {
+                        DisplayPostById { id: current_id() }
+                    },
+                    Some(_) => rsx! {
+                        div { class: "text-center py-8 text-red-500", "Post not found" }
+                    },
+                    None => rsx! {
+                        div { class: "text-center py-8 animate-pulse", "Loading post..." }
+                    },
                 }
             }
 
