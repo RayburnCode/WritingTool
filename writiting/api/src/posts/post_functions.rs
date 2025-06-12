@@ -6,7 +6,6 @@ use crate::db::connection_pool::get_db;
 use tracing::info;
 
 
-
 #[server]
 pub async fn create_post(title: String, body: String) -> Result<i32, ServerFnError> {
     let db = get_db().await;
@@ -105,11 +104,13 @@ pub async fn update_post(id: i32, title: String, body: String) -> Result<Post, S
 
 
 #[server]
-async fn get_max_post_id() -> Result<i32, ServerFnError> {
+pub async fn get_post_count() -> Result<i32, ServerFnError> {
     let db = get_db().await;
-    let count = sqlx::query_scalar("SELECT MAX(id) FROM posts")
+    let count = sqlx::query!("SELECT COUNT(*) as count FROM posts")
         .fetch_one(db)
         .await?
-        .unwrap_or(0); // Returns 0 if no posts exist
-    Ok(count)
+        .count // Returns 0 if no posts exist
+        .map(|v| v as i32);  // Convert Some(i64) to Some(i32)
+
+    Ok(count.expect("REASON"))
 }

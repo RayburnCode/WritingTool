@@ -17,12 +17,13 @@ pub fn DisplayPostsById(id: i32) -> Element {
     });
 
     // Provide a simpler refresh function
-    let refresh = move || {
+    let refresh = std::rc::Rc::new(move || {
         refresh_count += 1;
-    };
-    provide_context(refresh);
+    });
+    provide_context(refresh.clone());
 
-    match post.read().as_ref() {
+    let post_ref = post.read();
+    match post_ref.as_ref() {
         Some(Some(post)) => rsx! {
             div {
                 UpdatePost { key: "{post.id}", post: post.clone() }

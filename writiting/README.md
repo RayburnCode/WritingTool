@@ -37,7 +37,7 @@ DATABASE_URL=postgres://myuser:mypassword@localhost:5435/mydb
 #### SQLX database create
 
 ```
-sqlx database create --database-url postgres://tester:tester@localhost:5432/tester
+sqlx database create --database-url postgres://myuser:mypassword@localhost:5435/mydb
 
 ```
 
@@ -57,28 +57,7 @@ sqlx migrate add message_table
 sqlx migrate run --database-url postgres://tester:tester@localhost:5432/tester
 ```
 
--- Add migration script here
-
-CREATE TABLE posts (
-id SERIAL PRIMARY KEY,
-title TEXT NOT NULL,
-body TEXT NOT NULL
-);
-
-sqlx migrate run --database-url="postgres://myuser:mypassword@localhost:5435/mydatabase"
-
-CREATE TABLE posts (
-id SERIAL PRIMARY KEY,
-title TEXT NOT NULL,
-body TEXT NOT NULL
-);
-
-dx bundle --platform desktop \
- --package-types "macos" \
- --package-types "dmg"
-
-```
-
 ```
 
 dx bundle --platform desktop --package-types "msi"
+```

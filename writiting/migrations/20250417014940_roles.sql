@@ -1,4 +1,4 @@
--- Add migration script here
+-- writiting/migrations/20250611192414_roles.sql
 -- Roles table
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
