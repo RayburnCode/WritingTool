@@ -4,6 +4,7 @@ use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationErrors};
 use argon2::{self, Config};
 use rand::Rng;
+use sqlx::Type;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::FromRow, Validate)]
 pub struct User {
@@ -15,11 +16,18 @@ pub struct User {
     #[validate(length(min = 3, max = 50, message = "Username must be 3-50 characters"))]
     pub username: String,
     
-    pub password_hash: String,  // Never serialize this field
-    pub salt: String,          // Never serialize this field
+    #[serde(skip_serializing)]
+    pub password_hash: String,
+    
+    #[serde(skip_serializing)]
+    pub salt: String,
     
     pub role_id: i32,
+    
+    #[serde(default = "default_active")]
     pub is_active: bool,
+    
+    #[serde(default = "default_email_verified")]
     pub email_verified: bool,
     
     #[serde(with = "chrono::serde::ts_seconds")]
@@ -32,11 +40,14 @@ pub struct User {
     pub role: Option<Role>,
 }
 
-#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::FromRow)]
+fn default_active() -> bool { true }
+fn default_email_verified() -> bool { false }
+
+#[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::FromRow, Type)]
 pub struct Role {
     pub id: i32,
     pub name: String,
-    pub permissions: Vec<String>, // Store as JSON in DB or use a separate table
+    pub permissions: Vec<String>,
 }
 
 impl User {
@@ -56,6 +67,7 @@ impl User {
         let password_hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config)
             .unwrap();
             
+        let now = Utc::now();
         let user = Self {
             id: Uuid::new_v4(),
             email,
@@ -65,8 +77,8 @@ impl User {
             role_id,
             is_active: true,
             email_verified: false,
-            created_at: Utc::now(),
-            updated_at: Utc::now(),
+            created_at: now,
+            updated_at: now,
             role: None,
         };
         
@@ -82,5 +94,19 @@ impl User {
         self.role.as_ref()
             .map(|r| r.permissions.contains(&permission.to_string()))
             .unwrap_or(false)
+    }
+    
+    pub fn update_password(&mut self, new_password: &str) {
+        let salt: String = rand::thread_rng()
+            .sample_iter(&rand::distributions::Alphanumeric)
+            .take(16)
+            .map(char::from)
+            .collect();
+            
+        let config = Config::default();
+        self.password_hash = argon2::hash_encoded(new_password.as_bytes(), salt.as_bytes(), &config)
+            .unwrap();
+        self.salt = salt;
+        self.updated_at = Utc::now();
     }
 }
