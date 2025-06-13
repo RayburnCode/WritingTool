@@ -2,8 +2,9 @@ use uuid::Uuid;
 use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationErrors};
-use argon2::{self, Config};
+use argon2::{Argon2, password_hash::{PasswordHasher, SaltString}};
 use rand::Rng;
+use argon2::password_hash::rand_core::OsRng;
 use sqlx::Type;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::FromRow, Validate)]
@@ -57,15 +58,11 @@ impl User {
         password: String,
         role_id: i32,
     ) -> Result<Self, ValidationErrors> {
-        let salt: String = rand::thread_rng()
-            .sample_iter(&rand::distributions::Alphanumeric)
-            .take(16)
-            .map(char::from)
-            .collect();
-            
-        let config = Config::default();
-        let password_hash = argon2::hash_encoded(password.as_bytes(), salt.as_bytes(), &config)
-            .unwrap();
+let salt = SaltString::generate(&mut OsRng);  
+        let argon2 = Argon2::default();
+        let password_hash = argon2.hash_password(password.as_bytes(), &salt)
+            .unwrap()
+            .to_string();
             
         let now = Utc::now();
         let user = Self {
@@ -73,7 +70,7 @@ impl User {
             email,
             username,
             password_hash,
-            salt,
+            salt: salt.to_string(),
             role_id,
             is_active: true,
             email_verified: false,
@@ -87,7 +84,12 @@ impl User {
     }
     
     pub fn verify_password(&self, password: &str) -> bool {
-        argon2::verify_encoded(&self.password_hash, password.as_bytes()).unwrap_or(false)
+        use argon2::{Argon2, PasswordHash, PasswordVerifier};
+        if let Ok(parsed_hash) = PasswordHash::new(&self.password_hash) {
+            Argon2::default().verify_password(password.as_bytes(), &parsed_hash).is_ok()
+        } else {
+            false
+        }
     }
     
     pub fn has_permission(&self, permission: &str) -> bool {
@@ -95,18 +97,14 @@ impl User {
             .map(|r| r.permissions.contains(&permission.to_string()))
             .unwrap_or(false)
     }
-    
-    pub fn update_password(&mut self, new_password: &str) {
-        let salt: String = rand::thread_rng()
-            .sample_iter(&rand::distributions::Alphanumeric)
-            .take(16)
-            .map(char::from)
-            .collect();
-            
-        let config = Config::default();
-        self.password_hash = argon2::hash_encoded(new_password.as_bytes(), salt.as_bytes(), &config)
-            .unwrap();
-        self.salt = salt;
+
+    pub fn set_password(&mut self, new_password: &str) {
+let salt = SaltString::generate(&mut OsRng);  
+        let argon2 = Argon2::default();
+        self.password_hash = argon2.hash_password(new_password.as_bytes(), &salt)
+            .unwrap()
+            .to_string();
+        self.salt = salt.to_string();
         self.updated_at = Utc::now();
     }
-}
+} 

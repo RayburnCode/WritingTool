@@ -20,7 +20,7 @@ pub use posts::{
 pub mod db;
 pub use db::{get_db, init_db};
 
-pub mod authentication;
+// pub mod authentication;
 
 
 pub mod users;
