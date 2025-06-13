@@ -47,21 +47,6 @@ pub async fn get_all_posts() -> Result<Vec<Post>, ServerFnError> {
     Ok(result)
 }
 
-
-
-// #[server]
-// pub async fn find_post(id: i32) -> Result<Post, ServerFnError> {
-//     let db = get_db().await;
-
-//     // Use fetch_optional instead of fetch_one
-//     let result = sqlx::query_as::<_, Post>("SELECT * FROM posts WHERE id = $1")
-//         .fetch_optional(db)
-//         .await?
-//         .ok_or(ServerFnError::new("Post not found"))?;
-
-//     Ok(result)
-// }
-
 // In your API module (api/posts.rs)
 pub async fn find_post(id: i32) -> Result<Post, ServerFnError> {
     let db = get_db().await;
