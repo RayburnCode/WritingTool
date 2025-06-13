@@ -5,8 +5,8 @@ use api::posts::get_post_count;
 #[component]
 pub fn Blog(initial_id: i32) -> Element {
     // Track the current post ID and max ID
-    let mut current_id = use_signal(|| initial_id.max(1));
-    let mut max_post_id = use_signal(|| None);
+    let mut current_id: Signal<i32> = use_signal(|| initial_id.max(1));
+    let mut max_post_id: Signal<Option<i32>> = use_signal(|| None);
     
     // Fetch the actual max post ID from the server
     let posts_count = use_resource(move || async move {
@@ -27,7 +27,7 @@ pub fn Blog(initial_id: i32) -> Element {
     // Update max_post_id when posts_count changes
     use_effect(move || {
         if let Some(Some(count)) = posts_count.read().as_ref() {
-            max_post_id.set(Some(*count));
+            max_post_id.set((*count).try_into().ok());
         }
     });
 

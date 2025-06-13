@@ -42,6 +42,10 @@ sqlx database create --database-url postgres://myuser:mypassword@localhost:5435/
 ```
 
 ```
+sqlx migrate run
+```
+
+```
 sqlx migrate add posts
 ```
 
