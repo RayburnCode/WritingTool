@@ -1,5 +1,4 @@
 -- writiting/migrations/20250417014939_posts.sql
--- Add migration script here
 -- Updated to include timestamps and constraints
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,

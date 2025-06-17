@@ -1,4 +1,4 @@
--- writiting/migrations/20250611192414_roles.sql
+-- writiting/migrations/20250417014940_roles.sql
 -- Roles table
 CREATE TABLE roles (
     id SERIAL PRIMARY KEY,
@@ -60,3 +60,6 @@ SELECT r.id, p.id FROM roles r, permissions p
 WHERE r.name = 'user' AND p.code IN (
     'post:read', 'comment:write'
 );
+
+CREATE INDEX idx_role_permissions_role_id ON role_permissions(role_id);
+CREATE INDEX idx_role_permissions_permission_id ON role_permissions(permission_id);

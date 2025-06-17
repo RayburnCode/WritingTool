@@ -1,7 +1,7 @@
 use dioxus::prelude::*;
 
 use views::{AppLayout, Blog, Home, Editor, FocusMode, NotFound};
-use views::profile::{AccountSettings, Profile};
+use views::profile::Profile;
 use views::legal::{PrivacyPolicy, TermsOfService};
 use views::admin::{AdminDashboard, AdminUsers, AdminReports, AdminSettings};
 use views::ai::AIChat;
@@ -31,8 +31,7 @@ pub enum Route {
         #[route("/focus")]
         FocusMode {},
         
-        #[route("/settings")]
-        AccountSettings {},
+
 
         #[route("/profile")]
         Profile {},

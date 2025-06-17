@@ -1,3 +1,5 @@
+-- writiting/migrations/20250417014941_users.sql
+
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -16,7 +18,7 @@ CREATE TABLE users (
   reset_token_expires_at TIMESTAMPTZ,
   created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT fk_role FOREIGN KEY (role_id) REFERENCES roles(id)
+  CONSTRAINT fk_users_role FOREIGN KEY (role_id) REFERENCES roles(id)
 );
 
 -- Create indexes after table creation for better performance
@@ -25,7 +27,7 @@ CREATE UNIQUE INDEX idx_users_username ON users (LOWER(username));
 CREATE INDEX idx_users_role_id ON users (role_id) WHERE is_active = true;
 CREATE INDEX idx_users_reset_token ON users (reset_token) WHERE reset_token IS NOT NULL;
 
--- User profiles with optimized JSONB and text fields
+-- User profiles - REMOVED redundant social_links JSONB field
 CREATE TABLE profiles (
   user_id UUID PRIMARY KEY,
   first_name VARCHAR(100),
@@ -33,14 +35,10 @@ CREATE TABLE profiles (
   bio TEXT CHECK (LENGTH(bio) <= 2000),
   avatar_url TEXT CHECK (avatar_url ~ '^https?://'),
   website_url TEXT CHECK (website_url ~ '^https?://'),
-  social_links JSONB DEFAULT '{}'::jsonb,
   created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT fk_profiles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
-
--- Add GIN index for JSONB field if you'll query it
-CREATE INDEX idx_profiles_social_links ON profiles USING GIN (social_links);
 
 -- User preferences with enum-like constraints
 CREATE TABLE user_preferences (
@@ -52,7 +50,7 @@ CREATE TABLE user_preferences (
   email_notifications BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
+  CONSTRAINT fk_user_preferences_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
 -- Social media platforms with validation
@@ -73,10 +71,14 @@ CREATE TABLE user_social_links (
   is_public BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
   updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT fk_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
-  CONSTRAINT fk_platform FOREIGN KEY (platform_id) REFERENCES social_media_platforms(id),
+  CONSTRAINT fk_user_social_links_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+  CONSTRAINT fk_user_social_links_platform FOREIGN KEY (platform_id) REFERENCES social_media_platforms(id),
   CONSTRAINT uq_user_platform UNIQUE (user_id, platform_id)
 );
+
+-- Add indexes for better performance
+CREATE INDEX idx_user_social_links_user_id ON user_social_links(user_id);
+CREATE INDEX idx_user_social_links_platform_id ON user_social_links(platform_id);
 
 -- Create a view for commonly accessed social links
 CREATE VIEW user_social_profiles AS
@@ -87,16 +89,13 @@ SELECT
 FROM 
   users u
 LEFT JOIN 
-  user_social_links usl ON u.id = usl.user_id
+  user_social_links usl ON u.id = usl.user_id AND usl.is_public = true
 LEFT JOIN 
   social_media_platforms smp ON usl.platform_id = smp.id
-WHERE 
-  usl.is_public = true
 GROUP BY 
   u.id, u.username;
 
--- Pre-populate common platforms (using transaction for atomicity)
-BEGIN;
+-- Pre-populate common platforms
 INSERT INTO social_media_platforms (name, base_url, icon_class) VALUES
   ('Instagram', 'https://instagram.com/', 'fa-instagram'),
   ('Twitter/X', 'https://x.com/', 'fa-x-twitter'),
@@ -106,4 +105,3 @@ INSERT INTO social_media_platforms (name, base_url, icon_class) VALUES
   ('YouTube', 'https://youtube.com/', 'fa-youtube'),
   ('TikTok', 'https://tiktok.com/', 'fa-tiktok'),
   ('Discord', 'https://discord.com/', 'fa-discord');
-COMMIT;

@@ -1,115 +1,121 @@
+-- writiting/migrations/20250417014944_security.sql
+
+-- Password reset tokens (remove duplicate fields from users table)
 CREATE TABLE password_reset_tokens (
   token UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   expires_at TIMESTAMPTZ NOT NULL,
   used BOOLEAN NOT NULL DEFAULT false,
-  ip_address INET,  -- Track originating IP
-  user_agent TEXT,  -- Track originating device
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+  ip_address INET,
+  user_agent TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
   CONSTRAINT token_not_expired CHECK (expires_at > created_at)
 );
 
 CREATE INDEX idx_password_reset_active ON password_reset_tokens(user_id) 
-  WHERE used = false AND expires_at > now();
+WHERE used = false;
 
-  CREATE TABLE email_verification_tokens (
+-- Email verification tokens
+CREATE TABLE email_verification_tokens (
   token UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-  new_email VARCHAR(255),  -- For email change verification
+  new_email VARCHAR(255) CHECK (new_email IS NULL OR new_email ~ '^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$'),
   expires_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT token_not_expired CHECK (expires_at > created_at),
-  CONSTRAINT one_token_per_user UNIQUE (user_id) 
-    WHERE new_email IS NULL  -- Allow multiple for email changes
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
+  CONSTRAINT token_not_expired CHECK (expires_at > created_at)
 );
 
-CREATE INDEX idx_email_verification_active ON email_verification_tokens(token) 
-  WHERE expires_at > now();
+CREATE UNIQUE INDEX idx_email_verification_unique_user ON email_verification_tokens(user_id) 
+WHERE new_email IS NULL;
 
-  CREATE TABLE encrypted_secrets (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  name VARCHAR(100) NOT NULL,
-  environment VARCHAR(50) NOT NULL,  -- 'production', 'staging', etc.
-  current_value BYTEA NOT NULL,
-  previous_value BYTEA,
-  encryption_key_id VARCHAR(100) NOT NULL,
-  version INTEGER NOT NULL DEFAULT 1,
-  rotated_at TIMESTAMPTZ NOT NULL,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT unique_secret_name_env UNIQUE (name, environment)
-);
+CREATE INDEX idx_email_verification_active ON email_verification_tokens(token);
 
--- Add audit trail for secret rotations
-CREATE TABLE secret_rotation_logs (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  secret_id UUID NOT NULL REFERENCES encrypted_secrets(id),
-  rotation_type VARCHAR(20) NOT NULL,  -- 'manual', 'scheduled', 'emergency'
-  rotated_by UUID REFERENCES users(id),  -- If manual rotation
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
-);
+-- API Keys for programmatic access
+CREATE TYPE api_scope AS ENUM ('read', 'write', 'admin');
 
 CREATE TABLE api_keys (
   key UUID PRIMARY KEY DEFAULT gen_random_uuid(),
   user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
   name TEXT NOT NULL,
   description TEXT,
-  scopes TEXT[] NOT NULL,
-  allowed_ips CIDR[],  -- IP restrictions
+  scopes api_scope[] NOT NULL,
+  allowed_ips CIDR[],
   expires_at TIMESTAMPTZ,
   last_used_at TIMESTAMPTZ,
   last_used_ip INET,
   revoked_at TIMESTAMPTZ,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  CONSTRAINT valid_scopes CHECK (
-    scopes <@ ARRAY['read', 'write', 'admin']::TEXT[]  -- Limit to known scopes
-  )
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
 
 CREATE INDEX idx_api_keys_user ON api_keys(user_id) WHERE revoked_at IS NULL;
-CREATE INDEX idx_api_keys_active ON api_keys(key) WHERE revoked_at IS NULL AND (expires_at IS NULL OR expires_at > now());
+CREATE INDEX idx_api_keys_active ON api_keys(key) WHERE revoked_at IS NULL;
 
-CREATE TABLE feature_flags (
-  name VARCHAR(100) PRIMARY KEY,
-  description TEXT NOT NULL,
-  is_enabled BOOLEAN NOT NULL DEFAULT false,
-  rollout_percentage INTEGER NOT NULL DEFAULT 0 CHECK (rollout_percentage BETWEEN 0 AND 100),
-  target_users UUID[] DEFAULT '{}',
-  excluded_users UUID[] DEFAULT '{}',
-  target_roles INTEGER[] DEFAULT '{}',  -- References roles.id
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
-);
-
--- Add audit log for feature flag changes
-CREATE TABLE feature_flag_history (
-  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  flag_name VARCHAR(100) NOT NULL,
-  changed_by UUID REFERENCES users(id),
-  old_value JSONB NOT NULL,
-  new_value JSONB NOT NULL,
-  changed_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
-);
-
+-- Rate limiting
 CREATE TABLE rate_limits (
   bucket VARCHAR(255) PRIMARY KEY,
-  tokens DECIMAL NOT NULL,
-  capacity DECIMAL NOT NULL,
-  refill_rate DECIMAL NOT NULL,  -- Tokens per second
+  tokens DECIMAL NOT NULL CHECK (tokens >= 0),
+  capacity DECIMAL NOT NULL CHECK (capacity > 0),
+  refill_rate DECIMAL NOT NULL CHECK (refill_rate > 0),
   last_refill TIMESTAMPTZ NOT NULL,
   expires_at TIMESTAMPTZ NOT NULL,
-  metadata JSONB  -- Additional context like user_id, route, etc.
+  metadata JSONB DEFAULT '{}'::jsonb
 );
 
--- Add cleanup index
 CREATE INDEX idx_rate_limit_expires ON rate_limits(expires_at);
+
+-- Security event logging
+CREATE TYPE security_action AS ENUM (
+  'login_success', 'login_failed', 'logout', 'password_change', 
+  'password_reset_request', 'password_reset_complete', 'email_change',
+  'api_key_created', 'api_key_revoked', 'suspicious_activity'
+);
 
 CREATE TABLE security_logs (
   id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id UUID REFERENCES users(id),
-  action VARCHAR(50) NOT NULL,  -- 'login', 'password_change', etc.
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  action security_action NOT NULL,
   ip_address INET NOT NULL,
   user_agent TEXT,
-  metadata JSONB,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc')
+  metadata JSONB DEFAULT '{}'::jsonb,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
+
+CREATE INDEX idx_security_logs_user_id ON security_logs(user_id);
+CREATE INDEX idx_security_logs_action ON security_logs(action);
+CREATE INDEX idx_security_logs_created_at ON security_logs(created_at);
+CREATE INDEX idx_security_logs_ip ON security_logs(ip_address);
+
+-- General audit logging
+CREATE TYPE audit_action AS ENUM (
+  'create', 'update', 'delete', 'view', 'export', 'import'
+);
+
+CREATE TABLE audit_logs (
+  id BIGSERIAL PRIMARY KEY,
+  user_id UUID REFERENCES users(id) ON DELETE SET NULL,
+  action audit_action NOT NULL,
+  entity_type VARCHAR(50) NOT NULL,
+  entity_id TEXT NOT NULL, -- Using TEXT to handle different ID types
+  old_values JSONB,
+  new_values JSONB,
+  ip_address INET,
+  user_agent TEXT,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+);
+
+CREATE INDEX idx_audit_logs_user_id ON audit_logs(user_id);
+CREATE INDEX idx_audit_logs_entity ON audit_logs(entity_type, entity_id);
+CREATE INDEX idx_audit_logs_created_at ON audit_logs(created_at);
+
+-- Account lockout tracking
+CREATE TABLE account_lockouts (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+  reason VARCHAR(100) NOT NULL,
+  locked_until TIMESTAMPTZ NOT NULL,
+  created_by UUID REFERENCES users(id) ON DELETE SET NULL,
+  created_at TIMESTAMPTZ NOT NULL DEFAULT now()
+);
+
+CREATE INDEX idx_account_lockouts_user_id ON account_lockouts(user_id);
+CREATE INDEX idx_account_lockouts_active ON account_lockouts(user_id);

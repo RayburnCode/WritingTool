@@ -30,11 +30,7 @@ pub fn DesktopNavbar(children: Element) -> Element {
             to: Some("/profile".to_string()),  // Use string paths
             onclick: None,
         },
-        MenuItem {
-            label: "Account Settings".to_string(),
-            to: Some("/settings".to_string()),
-            onclick: None,
-        },
+
                 MenuItem {
             label: "Toggle Theme - DNW".to_string(),
             to: None,
