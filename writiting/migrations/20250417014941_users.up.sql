@@ -1,5 +1,3 @@
--- writiting/migrations/20250417014941_users.sql
-
 -- Enable UUID extension if not already enabled
 CREATE EXTENSION IF NOT EXISTS "pgcrypto";
 
@@ -27,7 +25,7 @@ CREATE UNIQUE INDEX idx_users_username ON users (LOWER(username));
 CREATE INDEX idx_users_role_id ON users (role_id) WHERE is_active = true;
 CREATE INDEX idx_users_reset_token ON users (reset_token) WHERE reset_token IS NOT NULL;
 
--- User profiles - REMOVED redundant social_links JSONB field
+-- User profiles
 CREATE TABLE profiles (
   user_id UUID PRIMARY KEY,
   first_name VARCHAR(100),
@@ -36,11 +34,11 @@ CREATE TABLE profiles (
   avatar_url TEXT CHECK (avatar_url ~ '^https?://'),
   website_url TEXT CHECK (website_url ~ '^https?://'),
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT fk_profiles_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- User preferences with enum-like constraints
+-- User preferences
 CREATE TABLE user_preferences (
   user_id UUID PRIMARY KEY,
   language VARCHAR(10) NOT NULL DEFAULT 'en' 
@@ -49,11 +47,11 @@ CREATE TABLE user_preferences (
     CHECK (theme IN ('light', 'dark', 'system')),
   email_notifications BOOLEAN NOT NULL DEFAULT true,
   created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT fk_user_preferences_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE
 );
 
--- Social media platforms with validation
+-- Social media platforms (created before user_social_links)
 CREATE TABLE social_media_platforms (
   id SMALLSERIAL PRIMARY KEY,
   name VARCHAR(50) NOT NULL,
@@ -62,26 +60,26 @@ CREATE TABLE social_media_platforms (
   CONSTRAINT uq_platform_name UNIQUE (name)
 );
 
--- Optimized user social links with proper constraints
+-- User social links (created after both users and platforms exist)
 CREATE TABLE user_social_links (
   id SERIAL PRIMARY KEY,
   user_id UUID NOT NULL,
   platform_id SMALLINT NOT NULL,
   username VARCHAR(100) NOT NULL,
   is_public BOOLEAN NOT NULL DEFAULT true,
-  created_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
-  updated_at TIMESTAMPTZ NOT NULL DEFAULT (now() AT TIME ZONE 'utc'),
+  created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
+  updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
   CONSTRAINT fk_user_social_links_user FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
   CONSTRAINT fk_user_social_links_platform FOREIGN KEY (platform_id) REFERENCES social_media_platforms(id),
   CONSTRAINT uq_user_platform UNIQUE (user_id, platform_id)
 );
 
--- Add indexes for better performance
+-- Create indexes
 CREATE INDEX idx_user_social_links_user_id ON user_social_links(user_id);
 CREATE INDEX idx_user_social_links_platform_id ON user_social_links(platform_id);
 
--- Create a view for commonly accessed social links
-CREATE VIEW user_social_profiles AS
+-- Create view (must be last as it depends on everything)
+CREATE OR REPLACE VIEW user_social_profiles AS
 SELECT 
   u.id AS user_id,
   u.username,
@@ -95,7 +93,7 @@ LEFT JOIN
 GROUP BY 
   u.id, u.username;
 
--- Pre-populate common platforms
+-- Pre-populate platforms (must be after table creation)
 INSERT INTO social_media_platforms (name, base_url, icon_class) VALUES
   ('Instagram', 'https://instagram.com/', 'fa-instagram'),
   ('Twitter/X', 'https://x.com/', 'fa-x-twitter'),

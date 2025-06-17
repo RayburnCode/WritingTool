@@ -1,17 +1,18 @@
--- writiting/migrations/20250417014939_posts.sql
--- Updated to include timestamps and constraints
+-- Updated posts table with user relationship
 CREATE TABLE posts (
     id SERIAL PRIMARY KEY,
+    user_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
     title VARCHAR(100) NOT NULL CHECK (title <> ''),
     body TEXT NOT NULL CHECK (body <> ''),
-    created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
-    updated_at TIMESTAMPTZ NOT NULL DEFAULT NOW()
+    created_at TIMESTAMPTZ(0) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ(0) NOT NULL DEFAULT CURRENT_TIMESTAMP
 );
 
--- Add index for better query performance
+-- Add indexes
 CREATE INDEX idx_posts_created_at ON posts(created_at);
+CREATE INDEX idx_posts_user_id ON posts(user_id);  -- Important for user queries
 
--- Create trigger for automatic updated_at
+-- Timestamp trigger (unchanged)
 CREATE OR REPLACE FUNCTION update_post_timestamp()
 RETURNS TRIGGER AS $$
 BEGIN

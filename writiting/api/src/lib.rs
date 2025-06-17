@@ -30,3 +30,5 @@ pub mod role;
 pub mod session;
 
 pub mod comment;
+
+pub mod utils;
