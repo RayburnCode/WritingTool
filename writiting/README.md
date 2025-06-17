@@ -50,6 +50,10 @@ sqlx migrate add posts
 ```
 
 ```
+sqlx migrate add -r <name>
+```
+
+```
 sqlx migrate add profile_table
 ```
 
