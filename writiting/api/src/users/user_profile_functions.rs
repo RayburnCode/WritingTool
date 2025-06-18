@@ -3,8 +3,11 @@ use dioxus::prelude::*;
 use crate::users::{UserProfile, ProfileUpdate, User};
 use crate::ServerFnError;
 use crate::db::connection_pool::get_db;
-use tracing::info;
 use uuid::Uuid;
+use tracing::info;
+use validator::Validate;
+use anyhow; // Add to Cargo.toml if not already present
+
 
 #[server]
 pub async fn create_profile(user_id: Uuid) -> Result<(), ServerFnError> {
@@ -16,14 +19,12 @@ pub async fn create_profile(user_id: Uuid) -> Result<(), ServerFnError> {
     )
     .execute(db)
     .await
-    .map_err(|e| {
-        tracing::error!("Database error creating profile: {}", e);
-        ServerFnError::ServerError("Failed to create profile".into())
-    })?;
+// Change error returns to:
+.map_err(|e| ServerFnError::<anyhow::Error>::ServerError(format!("Failed to create profile: {}", e)))?;
 
     info!("Created profile for user: {}", user_id);
     Ok(())
-}
+} 
 
 #[server]
 pub async fn get_profile(user_id: Uuid) -> Result<UserProfile, ServerFnError> {

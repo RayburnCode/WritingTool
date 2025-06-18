@@ -4,7 +4,9 @@ use serde::{Deserialize, Serialize};
 use validator::Validate;
 use sqlx::FromRow;
 use crate::users::users_model::User;
-use crate::utils::validation::{URL_REGEX_STR, validate_url, validate_http_url};
+use crate::utils::validation::validate_http_url;
+
+
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, FromRow, Validate)]
 pub struct UserProfile {
@@ -16,26 +18,16 @@ pub struct UserProfile {
     
     #[validate(length(max = 100, message = "Last name must be 100 characters or less"))]
     pub last_name: Option<String>,
-    
+
     #[validate(length(max = 2000, message = "Bio must be 2000 characters or less"))]
     pub bio: Option<String>,
-     
-    // Option 1: Using the regex string directly
-    #[validate(url(message = "Avatar URL must be a valid URL"))]
-    #[validate(regex(
-        path = "validate_http_url",
-        message = "Avatar URL must start with http:// or https://"
-    ))]
+
+    #[validate(custom(function = "validate_http_url"))]
     pub avatar_url: Option<String>,
     
-    // Option 2: Using the validation function (alternative)
-    #[validate(url(message = "Website URL must be a valid URL"))]
-    #[validate(custom(
-        function = "validate_http_url",
-        message = "Website URL must start with http:// or https://"
-    ))]
+    #[validate(custom(function = "validate_http_url"))]
     pub website_url: Option<String>,
-    
+   
     #[serde(with = "chrono::serde::ts_seconds")]
     pub created_at: DateTime<Utc>,
     
@@ -62,29 +54,17 @@ impl UserProfile {
         }
     }
 
-    pub fn update(&mut self, update: ProfileUpdate) -> Result<(), validator::ValidationErrors> {
-        if let Some(first_name) = update.first_name {
-            self.first_name = Some(first_name);
-        }
-        if let Some(last_name) = update.last_name {
-            self.last_name = Some(last_name);
-        }
-        if let Some(bio) = update.bio {
-            self.bio = Some(bio);
-        }
-        if let Some(avatar_url) = update.avatar_url {
-            self.avatar_url = Some(avatar_url);
-        }
-        if let Some(website_url) = update.website_url {
-            self.website_url = Some(website_url);
-        }
-        
+
+    pub fn update(&mut self, first_name: String, last_name: String, bio: String, avatar_url: String, website_url: String) -> Result<(), validator::ValidationErrors> {
+        self.first_name = Some(first_name);
+        self.last_name = Some(last_name);
+        self.bio = Some(bio);
+        self.avatar_url = Some(avatar_url);
+        self.website_url = Some(website_url);
         self.updated_at = Utc::now();
-        self.validate()?;
-        Ok(())
+        self.validate()
     }
 }
-
 #[derive(Debug, Deserialize,Serialize, Validate, Clone)]
 pub struct ProfileUpdate {
     #[validate(length(max = 100))]
@@ -96,14 +76,11 @@ pub struct ProfileUpdate {
     #[validate(length(max = 2000))]
     pub bio: Option<String>,
     
-    #[validate(url)]    
-    #[validate(regex(
-        path = "crate::utils::validation::URL_REGEX",
-        message = "Avatar URL must start with http:// or https://"
-    ))]
+    #[validate(url)]
+    #[validate(custom(function = "validate_http_url"))]
     pub avatar_url: Option<String>,
 
     #[validate(url)]
-    #[validate(regex(path = "crate::utils::validation::URL_REGEX"))]
+    #[validate(custom(function = "validate_http_url"))]
     pub website_url: Option<String>,
 }

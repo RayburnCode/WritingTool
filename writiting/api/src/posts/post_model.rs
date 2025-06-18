@@ -39,7 +39,7 @@ impl Post {
         post.validate()?;
         Ok(post)
     }
-    
+     
 
     
     /// Updates the post content

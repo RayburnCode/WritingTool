@@ -3,12 +3,12 @@ use chrono::{DateTime, Utc};
 use serde::{Deserialize, Serialize};
 use validator::{Validate, ValidationErrors};
 use argon2::{Argon2, password_hash::{PasswordHasher, SaltString}};
-use rand::Rng;
 use argon2::password_hash::rand_core::OsRng;
 use sqlx::Type;
 
 #[derive(Clone, Debug, PartialEq, Serialize, Deserialize, sqlx::FromRow, Validate)]
 pub struct User {
+    #[serde(skip_serializing)]
     pub id: Uuid,
     
     #[validate(email(message = "Must be a valid email"))]
